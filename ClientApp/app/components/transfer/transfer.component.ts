@@ -1,5 +1,7 @@
 ﻿import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Http, Response, RequestOptions, Headers } from '@angular/http';
+import { Transfer } from '../../models/transfer/transfer.model';
 
 @Component({
     selector: 'transfer',
@@ -8,29 +10,24 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class TransferComponent {
     myForm: FormGroup;
     submitted: boolean = false;
+    transfer: Transfer;
 
-    constructor(fb: FormBuilder) {
+    constructor(public http: Http, fb: FormBuilder) {
+        this.transfer = new Transfer();
         this.myForm = fb.group({
-            'title': [null, Validators.required],
-            'amount': [null],
-            'direction': [null],
-            'date': [null],
-            'repeat': [null],
-            'repeatPeriod': [null],
-            'repeatMonth': [null],
-            'repeatDay': [null],
-            'isContinuous': [null]
+            'id': [null],
+            'title': [this.transfer.title, Validators.required],
+            'amount': [this.transfer.amount, Validators.required],
+            'direction': [this.transfer.direction, Validators.required],
+            'date': [this.transfer.date, Validators.required],
+            'isRepeated': [this.transfer.isRepeated],
+            'repeatPeriod': [this.transfer.repeatPeriod],
+            'finishDate': [this.transfer.finishDate],
+            'isContinuous': [this.transfer.isContinuous]
         });
-        this.myForm.controls['repeat'].valueChanges.subscribe((value: boolean) => {
+        this.myForm.controls['isRepeated'].valueChanges.subscribe((value: boolean) => {
             if (!value) {
                 this.myForm.controls['repeatPeriod'].setValue(null);
-                this.myForm.controls['repeatMonth'].setValue(null);
-                this.myForm.controls['repeatDay'].setValue(null);
-            }
-        });
-        this.myForm.controls['repeatPeriod'].valueChanges.subscribe((value: string) => {
-            if (value == '3') {
-                this.myForm.controls['repeatMonth'].setValue(null);
             }
         });
     }
@@ -38,7 +35,12 @@ export class TransferComponent {
     onSubmit(value: any): void {
         this.submitted = true;
         if (this.myForm.valid) {
-            console.log(value);
+            this.http.post('http://localhost:10503/api/Transfer', this.myForm.value)
+                .subscribe((res: Response) => {
+                    this.myForm.setValue(res.json());
+                    this.myForm.controls['date'].setValue(res.json().date.substring(0, 10));
+                    this.transfer = this.myForm.value;
+                });
         }
     }
 }
