@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using BusinessObjects;
+using CashFlow.DataAccess.EF;
+using BusinessObjects.Enums;
 
 namespace CashFlow.Controllers
 {
@@ -12,43 +14,142 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public IEnumerable<string> Get()
+        public IEnumerable<BusinessObjects.Transfer> Get()
         {
-            return new string[] { "value1", "value2" };
+            using (var context = new CashFlowContext())
+            {
+                IEnumerable<BusinessObjects.Transfer> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, BusinessObjects.Transfer>(t => Convert(t));
+                return transfers;
+            }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public string Get(int id)
+        public BusinessObjects.Transfer Get(int id)
         {
-            return "value";
+            using (var context = new CashFlowContext())
+            {
+                DataAccess.EF.Transfer efTransfer = context.Transfer.SingleOrDefault(t => t.Id == id);
+                if(efTransfer != null)
+                {
+                    BusinessObjects.Transfer transfer = Convert(efTransfer);
+                    return transfer;
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
         // POST api/values
         [HttpPost]
-        public Transfer Post([FromBody]Transfer transfer)
+        public BusinessObjects.Transfer Post([FromBody]BusinessObjects.Transfer transfer)
         {
             if(transfer != null)
             {
-                transfer.Id = 1;
+                if (transfer.Id.HasValue)
+                {
+                    using (var context = new CashFlowContext())
+                    {
+                        context.Transfer.Update(new DataAccess.EF.Transfer
+                        {
+                            Id = transfer.Id.Value,
+                            Amount = transfer.Amount,
+                            Date = transfer.Date,
+                            DirectionId = (int)transfer.Direction,
+                            FinishDate = transfer.FinishDate,
+                            IsContinuous = transfer.IsContinuous,
+                            IsRepeated = transfer.IsRepeated,
+                            RepeatPeriodId = (int)transfer.RepeatPeriod,
+                            Title = transfer.Title
+                        });
+                        context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    using(var context = new CashFlowContext())
+                    {
+                        context.Transfer.Add(new DataAccess.EF.Transfer
+                        {
+                            Amount = transfer.Amount,
+                            Date = transfer.Date,
+                            DirectionId = (int)transfer.Direction,
+                            FinishDate = transfer.FinishDate,
+                            IsContinuous = transfer.IsContinuous,
+                            IsRepeated = transfer.IsRepeated,
+                            RepeatPeriodId = (int)transfer.RepeatPeriod,
+                            Title = transfer.Title
+                        });
+                        context.SaveChanges();
+                    }
+                }
                 return transfer;
             }
             else
             {
-                return new Transfer();
+                return new BusinessObjects.Transfer();
             }
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        public void Put(int id, [FromBody]BusinessObjects.Transfer transfer)
         {
+            if (transfer != null)
+            {
+                if (transfer.Id.HasValue)
+                {
+                    using (var context = new CashFlowContext())
+                    {
+                        context.Transfer.Update(new DataAccess.EF.Transfer
+                        {
+                            Id = transfer.Id.Value,
+                            Amount = transfer.Amount,
+                            Date = transfer.Date,
+                            DirectionId = (int)transfer.Direction,
+                            FinishDate = transfer.FinishDate,
+                            IsContinuous = transfer.IsContinuous,
+                            IsRepeated = transfer.IsRepeated,
+                            RepeatPeriodId = (int)transfer.RepeatPeriod,
+                            Title = transfer.Title
+                        });
+                        context.SaveChanges();
+                    }
+                }
+            }
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
+            using(var context = new CashFlowContext())
+            {
+                var transfer = context.Transfer.FirstOrDefault(t => t.Id == id);
+                if(transfer != null)
+                {
+                    context.Remove(transfer);
+                    context.SaveChanges();
+                }
+            }
+        }
+
+        public static BusinessObjects.Transfer Convert(DataAccess.EF.Transfer t)
+        {
+            return new BusinessObjects.Transfer
+            {
+                Id = t.Id,
+                Amount = t.Amount,
+                Date = t.Date,
+                Direction = (Direction)t.DirectionId,
+                FinishDate = t.FinishDate,
+                IsContinuous = t.IsContinuous,
+                IsRepeated = t.IsRepeated,
+                RepeatPeriod = (RepeatPeriod)t.RepeatPeriodId,
+                Title = t.Title
+            };
         }
     }
 }
