@@ -11,7 +11,7 @@ export class TransferService {
     constructor(private http: Http) { }
 
     getTransferList(): Promise<Transfer[]> {
-        return this.http.get(this.transferUrl).toPromise()
+        return this.http.get(this.transferUrl).toPromise() 
             .then(response => response.json() as Transfer[])
             .catch(this.handleError);
     }
