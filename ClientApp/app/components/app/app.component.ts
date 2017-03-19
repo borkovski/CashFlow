@@ -6,4 +6,6 @@ import { Component } from '@angular/core';
     styles: [require('./app.component.css')]
 })
 export class AppComponent {
+    constructor() {
+    }
 }

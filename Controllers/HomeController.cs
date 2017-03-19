@@ -16,6 +16,7 @@ namespace CashFlow.Controllers
         public IActionResult Error()
         {
             return View();
+
         }
     }
 }

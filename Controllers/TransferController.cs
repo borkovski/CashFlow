@@ -14,11 +14,11 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public IEnumerable<BusinessObjects.Transfer> Get()
+        public List<BusinessObjects.Transfer> Get()
         {
             using (var context = new CashFlowContext())
             {
-                IEnumerable<BusinessObjects.Transfer> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, BusinessObjects.Transfer>(t => Convert(t));
+                List<BusinessObjects.Transfer> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, BusinessObjects.Transfer>(t => Convert(t)).ToList();
                 return transfers;
             }
         }

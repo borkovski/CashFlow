@@ -53,4 +53,8 @@
     <DotNetCliToolReference Include="Microsoft.DotNet.Watcher.Tools" Version="1.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ClientApp\app\services\transfer\" />
+  </ItemGroup>
+
 </Project>
