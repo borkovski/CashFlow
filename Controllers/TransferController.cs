@@ -14,25 +14,25 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public List<BusinessObjects.Transfer> Get()
+        public List<TransferDTO> Get()
         {
             using (var context = new CashFlowContext())
             {
-                List<BusinessObjects.Transfer> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, BusinessObjects.Transfer>(t => Convert(t)).ToList();
+                List<TransferDTO> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, TransferDTO>(t => Convert(t)).ToList();
                 return transfers;
             }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public BusinessObjects.Transfer Get(int id)
+        public TransferDTO Get(int id)
         {
             using (var context = new CashFlowContext())
             {
                 DataAccess.EF.Transfer efTransfer = context.Transfer.SingleOrDefault(t => t.Id == id);
                 if(efTransfer != null)
                 {
-                    BusinessObjects.Transfer transfer = Convert(efTransfer);
+                    TransferDTO transfer = Convert(efTransfer);
                     return transfer;
                 }
                 else
@@ -44,7 +44,7 @@ namespace CashFlow.Controllers
 
         // POST api/values
         [HttpPost]
-        public BusinessObjects.Transfer Post([FromBody]BusinessObjects.Transfer transfer)
+        public TransferDTO Post([FromBody]TransferDTO transfer)
         {
             if(transfer != null)
             {
@@ -62,7 +62,8 @@ namespace CashFlow.Controllers
                             IsContinuous = transfer.IsContinuous,
                             IsRepeated = transfer.IsRepeated,
                             RepeatPeriodId = (int)transfer.RepeatPeriod,
-                            Title = transfer.Title
+                            Title = transfer.Title,
+                            AccountId = transfer.Account
                         });
                         context.SaveChanges();
                     }
@@ -80,7 +81,8 @@ namespace CashFlow.Controllers
                             IsContinuous = transfer.IsContinuous,
                             IsRepeated = transfer.IsRepeated,
                             RepeatPeriodId = (int)transfer.RepeatPeriod,
-                            Title = transfer.Title
+                            Title = transfer.Title,
+                            AccountId = transfer.Account
                         });
                         context.SaveChanges();
                     }
@@ -89,13 +91,13 @@ namespace CashFlow.Controllers
             }
             else
             {
-                return new BusinessObjects.Transfer();
+                return new TransferDTO();
             }
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]BusinessObjects.Transfer transfer)
+        public void Put(int id, [FromBody]TransferDTO transfer)
         {
             if (transfer != null)
             {
@@ -136,20 +138,24 @@ namespace CashFlow.Controllers
             }
         }
 
-        public static BusinessObjects.Transfer Convert(DataAccess.EF.Transfer t)
+        public static TransferDTO Convert(DataAccess.EF.Transfer t)
         {
-            return new BusinessObjects.Transfer
+            TransferDTO transferDTO = new TransferDTO();
+
+            transferDTO.Id = t.Id;
+            transferDTO.Amount = t.Amount;
+            transferDTO.Date = t.Date;
+            transferDTO.Direction = (Direction)t.DirectionId;
+            transferDTO.FinishDate = t.FinishDate;
+            transferDTO.IsContinuous = t.IsContinuous;
+            transferDTO.IsRepeated = t.IsRepeated;
+            if (t.RepeatPeriodId.HasValue)
             {
-                Id = t.Id,
-                Amount = t.Amount,
-                Date = t.Date,
-                Direction = (Direction)t.DirectionId,
-                FinishDate = t.FinishDate,
-                IsContinuous = t.IsContinuous,
-                IsRepeated = t.IsRepeated,
-                RepeatPeriod = (RepeatPeriod)t.RepeatPeriodId,
-                Title = t.Title
-            };
+                transferDTO.RepeatPeriod = (RepeatPeriod)t.RepeatPeriodId;
+            }
+            transferDTO.Title = t.Title;
+            transferDTO.Account = t.AccountId;
+            return transferDTO;
         }
     }
 }

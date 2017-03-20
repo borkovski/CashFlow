@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects
 {
-    public class Transfer
+    public class TransferDTO
     {
         public long? Id { get; set; }
         public string Title { get; set; }
@@ -17,8 +17,9 @@ namespace BusinessObjects
         public RepeatPeriod? RepeatPeriod { get; set; }
         public DateTime? FinishDate { get; set; }
         public bool? IsContinuous { get; set; }
+        public long Account { get; set; }
 
-        public Transfer()
+        public TransferDTO()
         {
         }
     }

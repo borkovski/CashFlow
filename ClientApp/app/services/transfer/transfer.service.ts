@@ -17,7 +17,7 @@ export class TransferService {
     }
 
     getTransfer(transferId: number): Promise<Transfer> {
-        return this.http.get('${this.transferUrl}/${transferId}').toPromise()
+        return this.http.get(this.transferUrl+'/'+transferId).toPromise()
             .then(response => response.json() as Transfer)
             .catch(this.handleError);
     }

@@ -14,7 +14,9 @@ namespace CashFlow.DataAccess.EF
         public int? RepeatPeriodId { get; set; }
         public DateTime? FinishDate { get; set; }
         public bool? IsContinuous { get; set; }
+        public long AccountId { get; set; }
 
+        public virtual Account Account { get; set; }
         public virtual DictDirection Direction { get; set; }
         public virtual DictRepeatPeriod RepeatPeriod { get; set; }
     }

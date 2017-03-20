@@ -6,7 +6,8 @@ namespace CashFlow.DataAccess.EF
 {
     public partial class CashFlowContext : DbContext
     {
-        public static string ConnectionString { get; set; }
+        public static string ConnectionString;
+        public virtual DbSet<Account> Account { get; set; }
         public virtual DbSet<DictDirection> DictDirection { get; set; }
         public virtual DbSet<DictRepeatPeriod> DictRepeatPeriod { get; set; }
         public virtual DbSet<Transfer> Transfer { get; set; }
@@ -18,6 +19,15 @@ namespace CashFlow.DataAccess.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.Property(e => e.Amount).HasColumnType("decimal");
+
+                entity.Property(e => e.Name)
+                    .IsRequired()
+                    .HasMaxLength(100);
+            });
+
             modelBuilder.Entity<DictDirection>(entity =>
             {
                 entity.ToTable("dict.Direction");
@@ -51,6 +61,12 @@ namespace CashFlow.DataAccess.EF
                 entity.Property(e => e.Title)
                     .IsRequired()
                     .HasMaxLength(100);
+
+                entity.HasOne(d => d.Account)
+                    .WithMany(p => p.Transfer)
+                    .HasForeignKey(d => d.AccountId)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("FK_Transfer_Account");
 
                 entity.HasOne(d => d.Direction)
                     .WithMany(p => p.Transfer)

@@ -8,6 +8,7 @@
     repeatPeriod: number;
     finishDate: string;
     isContinuous: boolean;
+    account: number;
 
     constructor() {
         this.isRepeated = false;

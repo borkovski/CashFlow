@@ -1,6 +1,6 @@
 ﻿<h2>My Transfers</h2>
 <ul>
     <li *ngFor="let transfer of transfers">
-        <span>{{transfer.id}}</span> {{transfer.title}}
+        <span>{{transfer.id}}</span><a [routerLink]="['/transfer', transfer.id]">{{transfer.title}}</a>
     </li>
 </ul>

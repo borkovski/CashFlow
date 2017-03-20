@@ -31,6 +31,22 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-sm-2" for="accountInput">
+            Account
+        </label>
+        <div class="col-sm-2">
+            <select class="form-control"
+                    id="accountInput"
+                    [formControl]="myForm.controls['account']">
+                <option value="1">ING</option>
+                <option value="2">DB</option>
+                <option value="3">Getin</option>
+                <option value="4">BZWBK</option>
+                <option value="5">Gotówka</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-sm-2" for="directionInput">
             Direction
         </label>
