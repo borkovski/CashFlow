@@ -27,7 +27,7 @@ import { TransferService } from './services/transfer/transfer.service';
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },
             { path: 'transferList', component: TransferListComponent },
-            { path: 'transfer/:id', component: TransferComponent },
+            { path: 'transfer', component: TransferComponent },
             { path: '**', redirectTo: 'home' }
         ])
     ]

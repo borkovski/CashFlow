@@ -14,25 +14,25 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public List<TransferDTO> Get()
+        public List<TransferDto> Get()
         {
             using (var context = new CashFlowContext())
             {
-                List<TransferDTO> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, TransferDTO>(t => Convert(t)).ToList();
+                List<TransferDto> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, TransferDto>(t => TransferDto.Map(t)).ToList();
                 return transfers;
             }
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public TransferDTO Get(int id)
+        public TransferDto Get(int id)
         {
             using (var context = new CashFlowContext())
             {
                 DataAccess.EF.Transfer efTransfer = context.Transfer.SingleOrDefault(t => t.Id == id);
-                if(efTransfer != null)
+                if (efTransfer != null)
                 {
-                    TransferDTO transfer = Convert(efTransfer);
+                    TransferDto transfer = TransferDto.Map(efTransfer);
                     return transfer;
                 }
                 else
@@ -44,60 +44,33 @@ namespace CashFlow.Controllers
 
         // POST api/values
         [HttpPost]
-        public TransferDTO Post([FromBody]TransferDTO transfer)
+        public long? Post([FromBody]TransferDto transfer)
         {
-            if(transfer != null)
+            if (transfer != null)
             {
-                if (transfer.Id.HasValue)
+                using (var context = new CashFlowContext())
                 {
-                    using (var context = new CashFlowContext())
-                    {
-                        context.Transfer.Update(new DataAccess.EF.Transfer
-                        {
-                            Id = transfer.Id.Value,
-                            Amount = transfer.Amount,
-                            Date = transfer.Date,
-                            DirectionId = (int)transfer.Direction,
-                            FinishDate = transfer.FinishDate,
-                            IsContinuous = transfer.IsContinuous,
-                            IsRepeated = transfer.IsRepeated,
-                            RepeatPeriodId = (int)transfer.RepeatPeriod,
-                            Title = transfer.Title,
-                            AccountId = transfer.Account
-                        });
-                        context.SaveChanges();
+                    if (transfer.Id.HasValue)
+                    { 
+                        context.Transfer.Update(TransferDto.Map(transfer));
                     }
-                }
-                else
-                {
-                    using(var context = new CashFlowContext())
+                    else
                     {
-                        context.Transfer.Add(new DataAccess.EF.Transfer
-                        {
-                            Amount = transfer.Amount,
-                            Date = transfer.Date,
-                            DirectionId = (int)transfer.Direction,
-                            FinishDate = transfer.FinishDate,
-                            IsContinuous = transfer.IsContinuous,
-                            IsRepeated = transfer.IsRepeated,
-                            RepeatPeriodId = (int)transfer.RepeatPeriod,
-                            Title = transfer.Title,
-                            AccountId = transfer.Account
-                        });
-                        context.SaveChanges();
+                        context.Transfer.Add(TransferDto.Map(transfer));
                     }
+                    context.SaveChanges();
                 }
-                return transfer;
+                return transfer.Id;
             }
             else
             {
-                return new TransferDTO();
+                return null;
             }
         }
 
         // PUT api/values/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody]TransferDTO transfer)
+        public void Put(int id, [FromBody]TransferDto transfer)
         {
             if (transfer != null)
             {
@@ -105,18 +78,7 @@ namespace CashFlow.Controllers
                 {
                     using (var context = new CashFlowContext())
                     {
-                        context.Transfer.Update(new DataAccess.EF.Transfer
-                        {
-                            Id = transfer.Id.Value,
-                            Amount = transfer.Amount,
-                            Date = transfer.Date,
-                            DirectionId = (int)transfer.Direction,
-                            FinishDate = transfer.FinishDate,
-                            IsContinuous = transfer.IsContinuous,
-                            IsRepeated = transfer.IsRepeated,
-                            RepeatPeriodId = (int)transfer.RepeatPeriod,
-                            Title = transfer.Title
-                        });
+                        context.Transfer.Update(TransferDto.Map(transfer));
                         context.SaveChanges();
                     }
                 }
@@ -127,35 +89,15 @@ namespace CashFlow.Controllers
         [HttpDelete("{id}")]
         public void Delete(int id)
         {
-            using(var context = new CashFlowContext())
+            using (var context = new CashFlowContext())
             {
                 var transfer = context.Transfer.FirstOrDefault(t => t.Id == id);
-                if(transfer != null)
+                if (transfer != null)
                 {
                     context.Remove(transfer);
                     context.SaveChanges();
                 }
             }
-        }
-
-        public static TransferDTO Convert(DataAccess.EF.Transfer t)
-        {
-            TransferDTO transferDTO = new TransferDTO();
-
-            transferDTO.Id = t.Id;
-            transferDTO.Amount = t.Amount;
-            transferDTO.Date = t.Date;
-            transferDTO.Direction = (Direction)t.DirectionId;
-            transferDTO.FinishDate = t.FinishDate;
-            transferDTO.IsContinuous = t.IsContinuous;
-            transferDTO.IsRepeated = t.IsRepeated;
-            if (t.RepeatPeriodId.HasValue)
-            {
-                transferDTO.RepeatPeriod = (RepeatPeriod)t.RepeatPeriodId;
-            }
-            transferDTO.Title = t.Title;
-            transferDTO.Account = t.AccountId;
-            return transferDTO;
         }
     }
 }

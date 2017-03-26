@@ -1,8 +1,9 @@
 {
+  "compileOnSave": true,
   "compilerOptions": {
     "moduleResolution": "node",
     "target": "es5",
-    "sourceMap": false,
+    "sourceMap": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "skipDefaultLibCheck": true,

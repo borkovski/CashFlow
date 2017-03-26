@@ -17,6 +17,38 @@
         </div>
     </div>
     <div class="form-group">
+        <label class="control-label col-sm-2" for="accountFromInput">
+            Account from
+        </label>
+        <div class="col-sm-2">
+            <select class="form-control"
+                    id="accountFromInput"
+                    [formControl]="myForm.controls['accountFromId']">
+                <option value="1">ING</option>
+                <option value="2">DB</option>
+                <option value="3">Getin</option>
+                <option value="4">BZWBK</option>
+                <option value="5">Gotówka</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
+        <label class="control-label col-sm-2" for="accountToInput">
+            Account to
+        </label>
+        <div class="col-sm-2">
+            <select class="form-control"
+                    id="accountToInput"
+                    [formControl]="myForm.controls['accountToId']">
+                <option value="1">ING</option>
+                <option value="2">DB</option>
+                <option value="3">Getin</option>
+                <option value="4">BZWBK</option>
+                <option value="5">Gotówka</option>
+            </select>
+        </div>
+    </div>
+    <div class="form-group">
         <label class="control-label col-sm-2" for="amountInput">
             Amount
         </label>
@@ -31,93 +63,19 @@
         </div>
     </div>
     <div class="form-group">
-        <label class="control-label col-sm-2" for="accountInput">
-            Account
-        </label>
-        <div class="col-sm-2">
-            <select class="form-control"
-                    id="accountInput"
-                    [formControl]="myForm.controls['account']">
-                <option value="1">ING</option>
-                <option value="2">DB</option>
-                <option value="3">Getin</option>
-                <option value="4">BZWBK</option>
-                <option value="5">Gotówka</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="directionInput">
-            Direction
-        </label>
-        <div class="col-sm-2">
-            <select class="form-control"
-                    id="directionInput"
-                    [formControl]="myForm.controls['direction']">
-                <option value="1">Credit</option>
-                <option value="2">Debit</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group">
         <label class="control-label col-sm-2" for="dateInput">
-            Date
+            Transfer date
         </label>
         <div class="col-sm-2">
             <input class="form-control"
                    type="text"
                    id="dateInput"
                    placeholder="YYYY-MM-DD"
-                   [formControl]="myForm.controls['date']" />
+                   [formControl]="myForm.controls['transferDate']" />
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="repeatInput">
-            Repeat
-        </label>
-        <div class="col-sm-2">
-            <input class="checkbox" 
-                   type="checkbox"
-                   id="repeatInput"
-                   [formControl]="myForm.controls['isRepeated']" />
-        </div>
-    </div>
-    <div class="form-group" *ngIf="myForm.controls['isRepeated'].value">
-        <label class="control-label col-sm-2" for="repeatPeriodInput">
-            Repeat period
-        </label>
-        <div class="col-sm-2">
-            <select class="form-control"
-                    id="repeatPeriodInput"
-                    [formControl]="myForm.controls['repeatPeriod']">
-                <option value="1">Year</option>
-                <option value="2">Quarter</option>
-                <option value="3">Month</option>
-            </select>
-        </div>
-    </div>
-    <div class="form-group" *ngIf="myForm.controls['isRepeated'].value && myForm.controls['repeatPeriod'].value">
-        <label class="control-label col-sm-2" for="finishDateInput">
-            Finish date
-        </label>
-        <div class="col-sm-2">
-            <input class="form-control"
-                   type="text"
-                   id="finishDateInput"
-                   placeholder="YYYY-MM-DD"
-                   [formControl]="myForm.controls['finishDate']" />
-        </div>
-    </div>
-    <div class="form-group" *ngIf="myForm.controls['isRepeated'].value && myForm.controls['repeatPeriod'].value">
-        <label class="control-label col-sm-2" for="isContinuousInput">
-            Is continuous
-        </label>
-        <div class="col-sm-2">
-            <input class="checkbox" 
-                   type="checkbox"
-                   id="isContinuousInput"
-                   [formControl]="myForm.controls['isContinuous']" />
-        </div>
+    <div class="info" *ngIf="saved">
+        Transfer saved
     </div>
     <div class="error" *ngIf="!myForm.valid && submitted">
         Please fill in required fields

@@ -1,5 +1,6 @@
 ﻿import { Injectable } from '@angular/core';
 import { Headers, Http } from '@angular/http';
+import * as moment from 'moment';
 
 import 'rxjs/add/operator/toPromise';
 import { Transfer } from '../../models/transfer/transfer.model';
@@ -18,7 +19,21 @@ export class TransferService {
 
     getTransfer(transferId: number): Promise<Transfer> {
         return this.http.get(this.transferUrl+'/'+transferId).toPromise()
-            .then(response => response.json() as Transfer)
+            .then(response => {
+                var transfer = response.json() as Transfer;
+                if (transfer) {
+                    transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD');
+                    console.log(transfer.transferDate);
+                }
+                return transfer;
+            })
+            .catch(this.handleError);
+    }
+
+    postTransfer(transfer: Transfer): Promise<number> {
+        transfer.transferDate = moment(transfer.transferDate).toISOString();
+        return this.http.post(this.transferUrl, transfer).toPromise()
+            .then(response => response.json() as number)
             .catch(this.handleError);
     }
 

@@ -4,10 +4,10 @@ using System.Text;
 
 namespace BusinessObjects.Enums
 {
-    public enum RepeatPeriod
+    public enum TransferPeriod
     {
-        Year = 1,
-        Quarter = 2,
-        Month = 3
+        None = 0,
+        Monthly = 1,
+        Quarterly = 2
     }
 }
