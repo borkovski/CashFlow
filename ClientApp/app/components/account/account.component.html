@@ -1,0 +1,40 @@
+﻿<h2 *ngIf="account.id">Account edit:</h2>
+<h2 *ngIf="!account.id">New account:</h2>
+<form [formGroup]="myForm"
+      (ngSubmit)="onSubmit(myForm.value)"
+      class="form-horizontal">
+    <input type="hidden" [formControl]="myForm.controls['id']" />
+    <div class="form-group" [class.has-error]="!myForm.controls['name'].valid && (myForm.controls['name'].touched || submitted)">
+        <label class="control-label col-lg-2" for="nameInput">
+            Name
+        </label>
+        <div class="col-lg-2">
+            <input class="form-control"
+                   type="text"
+                   id="nameInput"
+                   placeholder="Name"
+                   [formControl]="myForm.controls['name']" />
+        </div>
+    </div>
+    <div class="form-group" [class.has-error]="!myForm.controls['accountType'].valid && (myForm.controls['accountType'].touched || submitted)">
+        <label class="control-label col-lg-2" for="accountTypeInput">
+            Account type
+        </label>
+        <div class="col-lg-2">
+            <select class="form-control"
+                    id="accountTypeInput"
+                    [formControl]="myForm.controls['accountType']">
+                <option value="1">Internal</option>
+                <option value="2">External</option>
+            </select>
+        </div>
+    </div>
+    <div class="alert alert-success" *ngIf="saved">
+        Account saved
+    </div>
+    <div class="alert alert-danger" *ngIf="!myForm.valid && submitted">
+        Please fill in required fields
+    </div>
+    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn btn-danger" *ngIf="account.id" (click)="delete($event); false">Delete</button>
+</form>

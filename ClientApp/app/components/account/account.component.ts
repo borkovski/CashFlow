@@ -1,66 +1,58 @@
 ﻿import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
-import { Transfer } from '../../models/transfer/transfer.model';
 import { Account } from '../../models/account/account.model';
 import { Router, ActivatedRoute } from '@angular/router';
-import { TransferService } from '../../services/transfer/transfer.service';
 import { AccountService } from '../../services/account/account.service';
 
 @Component({
-    selector: 'transfer',
-    template: require('./transfer.component.html')
+    selector: 'account',
+    template: require('./account.component.html')
 })
-export class TransferComponent {
+export class AccountComponent {
     id: number;
-    accounts: Account[] = [];
     myForm: FormGroup;
     submitted: boolean = false;
     saved: boolean = false;
+    account: Account;
 
     constructor(
         private http: Http,
         private fb: FormBuilder,
         private route: ActivatedRoute,
-        private transferService: TransferService,
-        private accountService: AccountService,
+        private AccountService: AccountService,
         private router: Router) {
+        this.account = new Account();
         this.myForm = fb.group({
             'id': [null],
-            'accountFromId': [null, Validators.required],
-            'accountToId': [null, Validators.required],
-            'title': [null, Validators.required],
-            'amount': [null, Validators.required],
-            'transferDate': [null, Validators.required]
+            'name': [this.account.name, Validators.required],
+            'accountType': [this.account.accountType, Validators.required],
+            'currentBalance': [null]
         });
     }
 
     ngOnInit(): void {
-        var accountPromise:Promise<Account[]> = this.accountService.getAccountList()
-            .then(accounts => this.accounts = accounts);
         this.route.queryParams.subscribe(params => {
             this.id = params['id'];
             if (this.id) {
-                var transferPromise: Promise<Transfer> = this.transferService.getTransfer(this.id);
-                Promise.all([
-                    accountPromise,
-                    transferPromise
-                ]).then(value => {
-                    this.myForm.setValue(value[1]);
-                })
+                this.AccountService.getAccount(this.id)
+                    .then(account => {
+                        this.account = account;
+                        this.myForm.setValue(account);
+                    });
             }
-        })
+        });
     }
 
     onSubmit(value: any): void {
         this.saved = false;
         this.submitted = true;
         if (this.myForm.valid) {
-            this.transferService.postTransfer(this.myForm.value)
+            this.account = this.myForm.value;
+            this.AccountService.postAccount(this.account)
                 .then(id => {
                     if (id) {
                         this.myForm.controls['id'].setValue(id);
-                        this.id = id;
                         this.saved = true;
                     }
                 });
@@ -68,11 +60,11 @@ export class TransferComponent {
     }
 
     delete(event: any): void {
-        if (this.id) {
-            this.transferService.deleteTransfer(this.id)
+        if (this.account.id) {
+            this.AccountService.deleteAccount(this.account.id)
                 .then(ok => {
                     if (ok) {
-                        this.router.navigate(['./transferList']);
+                        this.router.navigate(['./accountList']);
                     }
                 });
         }

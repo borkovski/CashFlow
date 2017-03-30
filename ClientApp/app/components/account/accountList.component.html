@@ -1,0 +1,18 @@
+﻿<h2>My Accounts</h2>
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Current balance</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let account of accounts" [routerLink]="['/account']" [queryParams]="{ id: account.id }">
+            <td>{{account.id}}</td>
+            <td>{{account.name}}</td>
+            <td>{{account.currentBalance}}</td>
+        </tr>
+    </tbody>
+</table>
+<button class="btn btn-success" type="submit" [routerLink]="['/account']">Add new</button>

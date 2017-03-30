@@ -1,14 +1,14 @@
-﻿<h2 *ngIf="transfer.id">Transfer edit:</h2>
-<h2 *ngIf="!transfer.id">New transfer:</h2>
+﻿<h2 *ngIf="myForm.controls['id']">Transfer edit:</h2>
+<h2 *ngIf="!myForm.controls['id']">New transfer:</h2>
 <form [formGroup]="myForm"
       (ngSubmit)="onSubmit(myForm.value)"
       class="form-horizontal">
     <input type="hidden" [formControl]="myForm.controls['id']" />
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="titleInput">
+    <div class="form-group" [class.has-error]="!myForm.controls['title'].valid && (myForm.controls['title'].touched || submitted)">
+        <label class="control-label col-lg-2" for="titleInput">
             Title
         </label>
-        <div class="col-sm-2">
+        <div class="col-lg-2">
             <input class="form-control" 
                    type="text"
                    id="titleInput"
@@ -16,43 +16,35 @@
                    [formControl]="myForm.controls['title']" />
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="accountFromInput">
+    <div class="form-group" [class.has-error]="!myForm.controls['accountFromId'].valid && (myForm.controls['accountFromId'].touched || submitted)">
+        <label class="control-label col-lg-2" for="accountFromInput">
             Account from
         </label>
-        <div class="col-sm-2">
+        <div class="col-lg-2">
             <select class="form-control"
                     id="accountFromInput"
                     [formControl]="myForm.controls['accountFromId']">
-                <option value="1">ING</option>
-                <option value="2">DB</option>
-                <option value="3">Getin</option>
-                <option value="4">BZWBK</option>
-                <option value="5">Gotówka</option>
+                <option *ngFor="let acc of this.accounts" value="{{acc.id}}">{{acc.name}}</option>
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="accountToInput">
+    <div class="form-group" [class.has-error]="!myForm.controls['accountToId'].valid && (myForm.controls['accountToId'].touched || submitted)">
+        <label class="control-label col-lg-2" for="accountToInput">
             Account to
         </label>
-        <div class="col-sm-2">
+        <div class="col-lg-2">
             <select class="form-control"
                     id="accountToInput"
                     [formControl]="myForm.controls['accountToId']">
-                <option value="1">ING</option>
-                <option value="2">DB</option>
-                <option value="3">Getin</option>
-                <option value="4">BZWBK</option>
-                <option value="5">Gotówka</option>
+                <option *ngFor="let acc of this.accounts" value="{{acc.id}}">{{acc.name}}</option>
             </select>
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="amountInput">
+    <div class="form-group" [class.has-error]="!myForm.controls['amount'].valid && (myForm.controls['amount'].touched || submitted)">
+        <label class="control-label col-lg-2" for="amountInput">
             Amount
         </label>
-        <div class="col-sm-2">
+        <div class="col-lg-2">
             <input class="form-control"
                    type="number"
                    min="1"
@@ -62,11 +54,11 @@
                    [formControl]="myForm.controls['amount']" />
         </div>
     </div>
-    <div class="form-group">
-        <label class="control-label col-sm-2" for="dateInput">
+    <div class="form-group" [class.has-error]="!myForm.controls['transferDate'].valid && (myForm.controls['transferDate'].touched || submitted)">
+        <label class="control-label col-lg-2" for="dateInput">
             Transfer date
         </label>
-        <div class="col-sm-2">
+        <div class="col-lg-2">
             <input class="form-control"
                    type="text"
                    id="dateInput"
@@ -74,11 +66,12 @@
                    [formControl]="myForm.controls['transferDate']" />
         </div>
     </div>
-    <div class="info" *ngIf="saved">
+    <div class="alert alert-success" *ngIf="saved">
         Transfer saved
     </div>
-    <div class="error" *ngIf="!myForm.valid && submitted">
+    <div class="alert alert-danger" *ngIf="!myForm.valid && submitted">
         Please fill in required fields
     </div>
-    <button class="btn btn-default" type="submit">Submit</button>
+    <button class="btn btn-primary" type="submit">Submit</button>
+    <button class="btn btn-danger" *ngIf="id" (click)="delete($event); false">Delete</button>
 </form>
