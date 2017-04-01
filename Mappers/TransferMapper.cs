@@ -1,9 +1,5 @@
-﻿using BusinessObjects;
+﻿using CashFlow.BusinessObjects;
 using CashFlow.DataAccess.EF;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace CashFlow.Mappers
 {
@@ -21,7 +17,7 @@ namespace CashFlow.Mappers
             transferDto.Amount = transfer.Amount;
             transferDto.Id = transfer.Id;
             transferDto.Title = transfer.Name;
-            transferDto.TransferDate = transfer.TransferDate;
+            transferDto.TransferDate = transfer.TransferDate.ToUniversalTime();
             return transferDto;
         }
 
@@ -40,7 +36,7 @@ namespace CashFlow.Mappers
                 transfer.Id = transferDto.Id.Value;
             }
             transfer.Name = transferDto.Title;
-            transfer.TransferDate = transferDto.TransferDate;
+            transfer.TransferDate = transferDto.TransferDate.ToLocalTime();
             return transfer;
         }
     }

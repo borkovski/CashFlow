@@ -1,11 +1,6 @@
-﻿using BusinessObjects.Enums;
-using CashFlow.DataAccess.EF;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System;
 
-namespace BusinessObjects
+namespace CashFlow.BusinessObjects
 {
     public class TransferDto
     {

@@ -1,39 +1,39 @@
 ﻿using System.Collections.Generic;
 using Microsoft.AspNetCore.Mvc;
-using CashFlow.BusinessObjects;
 using CashFlow.BusinessLogic;
+using CashFlow.BusinessObjects;
 
 namespace CashFlow.Controllers
 {
     [Route("api/[controller]")]
-    public class TransferController : Controller
+    public class TransferSchemaController : Controller
     {
         // GET: api/values
         [HttpGet]
-        public List<TransferDto> Get()
+        public List<TransferSchemaDto> Get()
         {
-            return new TransferLogic().GetAll();
+            return new TransferSchemaLogic().GetAll();
         }
 
         // GET api/values/5
         [HttpGet("{id}")]
-        public TransferDto Get(long id)
+        public TransferSchemaDto Get(long id)
         {
-            return new TransferLogic().GetById(id);
+            return new TransferSchemaLogic().GetById(id);
         }
 
         // POST api/values
         [HttpPost]
-        public long? Post([FromBody]TransferDto transfer)
+        public long? Post([FromBody]TransferSchemaDto transfer)
         {
-            return new TransferLogic().Save(transfer);
+            return new TransferSchemaLogic().Save(transfer);
         }
 
         // DELETE api/values/5
         [HttpDelete("{id}")]
         public void Delete(long id)
         {
-            new TransferLogic().Delete(id);
+            new TransferSchemaLogic().Delete(id);
         }
     }
 }

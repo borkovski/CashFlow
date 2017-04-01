@@ -94,13 +94,17 @@ namespace CashFlow.DataAccess.EF
             {
                 entity.Property(e => e.Amount).HasColumnType("decimal");
 
+                entity.Property(e => e.LastTransferDate).HasColumnType("date");
+
                 entity.Property(e => e.Name)
                     .IsRequired()
                     .HasMaxLength(50);
 
-                entity.Property(e => e.TransferEndDate).HasColumnType("datetime");
+                entity.Property(e => e.TransferEndDate).HasColumnType("date");
 
-                entity.Property(e => e.TransferStartDate).HasColumnType("datetime");
+                entity.Property(e => e.TransferStartDate).HasColumnType("date");
+
+                entity.Property(e => e.TransferTime).HasDefaultValueSql("'00:00:00'");
 
                 entity.HasOne(d => d.AccountFrom)
                     .WithMany(p => p.TransferSchemaAccountFrom)

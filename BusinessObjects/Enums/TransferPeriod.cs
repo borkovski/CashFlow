@@ -1,13 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace BusinessObjects.Enums
+﻿
+namespace CashFlow.BusinessObjects.Enums
 {
     public enum TransferPeriod
     {
         None = 0,
-        Monthly = 1,
-        Quarterly = 2
+        Daily = 1,
+        Monthly = 2,
+        Quarterly = 3
     }
 }

@@ -58,4 +58,8 @@
     <Folder Include="ClientApp\app\models\account\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="wwwroot\Styles\default.css" />
+  </ItemGroup>
+
 </Project>
