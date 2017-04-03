@@ -1,0 +1,49 @@
+﻿<h2>Account history:</h2>
+<div *ngIf="accountHistory">
+    <div>Account {{accountHistory.name}} started with balance: {{accountHistory.accountStartBalance}}. Current balance is: {{accountHistory.accountCurrentBalance}}</div>
+    <div>
+        <account-history-chart [balancesPerDay]="balancesPerDay"></account-history-chart>
+    </div>
+    <div *ngIf="accountHistory.incomingTransfers.length">
+        <h3>Incoming transfers</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Title</td>
+                    <td>Account from</td>
+                    <td>Amount</td>
+                    <td>Date</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let transfer of accountHistory.incomingTransfers" [routerLink]="['/transfer']" [queryParams]="{ id: transfer.id }">
+                    <td>{{transfer.title}}</td>
+                    <td>{{transfer.accountFromId}}</td>
+                    <td>{{transfer.amount}}</td>
+                    <td>{{transfer.transferDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <div *ngIf="accountHistory.outgoingTransfers.length">
+        <h3>Outgoing transfers</h3>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <td>Title</td>
+                    <td>Account from</td>
+                    <td>Amount</td>
+                    <td>Date</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr *ngFor="let transfer of accountHistory.outgoingTransfers" [routerLink]="['/transfer']" [queryParams]="{ id: transfer.id }">
+                    <td>{{transfer.title}}</td>
+                    <td>{{transfer.accountFromId}}</td>
+                    <td>{{transfer.amount}}</td>
+                    <td>{{transfer.transferDate}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

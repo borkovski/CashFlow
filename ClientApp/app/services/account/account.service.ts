@@ -5,6 +5,7 @@ import * as moment from 'moment';
 
 import 'rxjs/add/operator/toPromise';
 import { Account } from '../../models/account/account.model';
+import { AccountHistory } from '../../models/account/accountHistory.model';
 
 @Injectable()
 export class AccountService extends BaseService<Account> {
@@ -16,6 +17,27 @@ export class AccountService extends BaseService<Account> {
 
     getAccount(accountId: number): Promise<Account> {
         return this.get(accountId);
+    }
+
+    getAccountHistory(accountId: number): Promise<AccountHistory> {
+        return this.http.get(this.url + 'History/' + accountId).toPromise()
+            .then(response => {
+                return response.json() as AccountHistory;
+            })
+            .then(accountHistory => {
+                if (accountHistory) {
+                    accountHistory.incomingTransfers = accountHistory.incomingTransfers.map(transfer => {
+                        transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
+                        return transfer;
+                    });
+                    accountHistory.outgoingTransfers = accountHistory.outgoingTransfers.map(transfer => {
+                        transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
+                        return transfer;
+                    });
+                    return accountHistory;
+                }
+            })
+            .catch(this.handleError);
     }
 
     postAccount(account: Account): Promise<number> {

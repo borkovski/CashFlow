@@ -1,4 +1,4 @@
-﻿import { Component } from '@angular/core';
+﻿import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import { Account } from '../../models/account/account.model';
@@ -9,7 +9,7 @@ import { AccountService } from '../../services/account/account.service';
     selector: 'account',
     template: require('./account.component.html')
 })
-export class AccountComponent {
+export class AccountComponent implements OnInit {
     id: number;
     myForm: FormGroup;
     submitted: boolean = false;

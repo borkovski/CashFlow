@@ -52,6 +52,33 @@ namespace CashFlow.BusinessLogic
             }
         }
 
+        public AccountHistoryDto GetAccountHistory(long accountId)
+        {
+            using (var context = new CashFlowContext())
+            {
+                DataAccess.EF.Account efAccount = context.Account
+                    .Include(a => a.AccountBalance)
+                    .Include(a => a.TransferAccountFrom)
+                    .Include(a => a.TransferAccountTo)
+                    .SingleOrDefault(t => t.Id == accountId);
+                if (efAccount != null)
+                {
+                    AccountBalance lastAccountBalance = efAccount.AccountBalance.OrderByDescending(b => b.StartDate).First();
+                    AccountHistoryDto account = AccountHistoryMapper.Map(
+                        efAccount,
+                        lastAccountBalance.Balance,
+                        lastAccountBalance.Balance - efAccount.TransferAccountFrom.Sum(t => t.Amount) + efAccount.TransferAccountTo.Sum(t => t.Amount),
+                        efAccount.TransferAccountTo,
+                        efAccount.TransferAccountFrom);
+                    return account;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
         public long? Save(AccountDto account)
         {
             if (account != null)

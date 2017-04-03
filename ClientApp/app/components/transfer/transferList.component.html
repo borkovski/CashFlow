@@ -1,16 +1,24 @@
 ﻿<h2>My Transfers</h2>
-
-<table class="table table-hover">
+<div class="loader" *ngIf="isLoading"></div>
+<table class="table table-hover" *ngIf="!isLoading">
     <thead>
         <tr>
             <td>Id</td>
             <td>Title</td>
+            <td>Account from</td>
+            <td>Account to</td>
+            <td>Amount</td>
+            <td>Date</td>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let transfer of transfers" [routerLink]="['/transfer']" [queryParams]="{ id: transfer.id }">
             <td>{{transfer.id}}</td>
             <td>{{transfer.title}}</td>
+            <td>{{transfer.accountFromId}}</td>
+            <td>{{transfer.accountToId}}</td>
+            <td>{{transfer.amount}}</td>
+            <td>{{transfer.transferDate}}</td>
         </tr>
     </tbody>
 </table> 

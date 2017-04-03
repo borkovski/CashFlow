@@ -7,13 +7,18 @@ import { TransferService } from '../../services/transfer/transfer.service';
     template: require('./transferList.component.html')
 })
 export class TransferListComponent implements OnInit {
+    isLoading: boolean;
     transfers: Transfer[] = [];
 
     constructor(private transferService: TransferService) {
     }
 
     ngOnInit(): void {
+        this.isLoading = true;
         this.transferService.getTransferList()
-            .then(transfers => this.transfers = transfers);
+            .then(transfers => {
+                this.transfers = transfers;
+                this.isLoading = false;
+            });
     }
 }

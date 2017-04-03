@@ -11,14 +11,18 @@ export class TransferService extends BaseService<Transfer> {
     protected url = 'http://localhost:10503/api/Transfer';
     
     getTransferList(): Promise<Transfer[]> {
-        return this.getList();
+        return this.getList().then(transfers => {
+            transfers.map((transfer) => {
+                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
+            });
+            return transfers;
+        });
     }
 
     getTransfer(transferId: number): Promise<Transfer> {
         return this.get(transferId).then(transfer => {
             if (transfer) {
-                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD');
-                console.log(transfer.transferDate);
+                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
                 return transfer;
             }
         })
