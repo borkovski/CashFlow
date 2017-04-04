@@ -13,11 +13,13 @@ namespace CashFlow.BusinessObjects
         public decimal AccountCurrentBalance { get; set; }
         public List<TransferDto> IncomingTransfers { get; set; }
         public List<TransferDto> OutgoingTransfers { get; set; }
+        public List<AccountBalanceHistoryDto> AccountBalanceHistory { get; set; }
 
         public AccountHistoryDto()
         {
             IncomingTransfers = new List<TransferDto>();
             OutgoingTransfers = new List<TransferDto>();
+            AccountBalanceHistory = new List<AccountBalanceHistoryDto>();
         }
     }
 }

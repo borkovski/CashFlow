@@ -1,8 +1,8 @@
 ﻿<h2>Account history:</h2>
 <div *ngIf="accountHistory">
     <div>Account {{accountHistory.name}} started with balance: {{accountHistory.accountStartBalance}}. Current balance is: {{accountHistory.accountCurrentBalance}}</div>
-    <div>
-        <account-history-chart [balancesPerDay]="balancesPerDay"></account-history-chart>
+    <div style="margin-top: 20px;">
+        <account-history-chart [balancesPerDay]="accountHistory.accountBalanceHistory"></account-history-chart>
     </div>
     <div *ngIf="accountHistory.incomingTransfers.length">
         <h3>Incoming transfers</h3>

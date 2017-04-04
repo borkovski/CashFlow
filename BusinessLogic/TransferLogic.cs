@@ -12,7 +12,11 @@ namespace CashFlow.BusinessLogic
         {
             using (var context = new CashFlowContext())
             {
-                List<TransferDto> transfers = context.Transfer.AsEnumerable().Select<DataAccess.EF.Transfer, TransferDto>(t => TransferMapper.Map(t)).ToList();
+                List<TransferDto> transfers = context.Transfer
+                    .AsEnumerable()
+                    .Select<DataAccess.EF.Transfer, TransferDto>(t => TransferMapper.Map(t))
+                    .OrderByDescending(t => t.TransferDate)
+                    .ToList();
                 return transfers;
             }
         }

@@ -12,7 +12,6 @@ import { AccountService } from '../../services/account/account.service';
 export class AccountHistoryComponent implements OnInit {
     id: number;
     accountHistory: AccountHistory;
-    balancesPerDay: number[] = [6000, 6500, 6500, 3000, 3000, 9000, 9000, 6000, 5900];
 
     constructor(
         private http: Http,

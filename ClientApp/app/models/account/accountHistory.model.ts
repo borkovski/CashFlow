@@ -1,4 +1,5 @@
 ﻿import { Transfer } from '../transfer/transfer.model';
+import { AccountBalanceHistory } from '../account/accountBalanceHistory.model';
 
 export class AccountHistory {
     id: number;
@@ -7,4 +8,5 @@ export class AccountHistory {
     accountCurrentBalance: number;
     incomingTransfers: Transfer[];
     outgoingTransfers: Transfer[];
+    accountBalanceHistory: AccountBalanceHistory[];
 }

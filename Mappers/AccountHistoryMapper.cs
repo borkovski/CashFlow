@@ -9,7 +9,7 @@ namespace CashFlow.Mappers
 {
     public class AccountHistoryMapper
     {
-        public static AccountHistoryDto Map(Account account, decimal startBalance, decimal currentBalance, IEnumerable<Transfer> incomingTrasnfers, IEnumerable<Transfer> outgoingTransfers)
+        public static AccountHistoryDto Map(Account account, AccountBalance startBalance, decimal currentBalance, IEnumerable<Transfer> incomingTrasnfers, IEnumerable<Transfer> outgoingTransfers)
         {
             if (account == null)
             {
@@ -18,7 +18,7 @@ namespace CashFlow.Mappers
             AccountHistoryDto accountDto = new AccountHistoryDto();
             accountDto.Id = account.Id;
             accountDto.Name = account.Name;
-            accountDto.AccountStartBalance = startBalance;
+            accountDto.AccountStartBalance = startBalance.Balance;
             accountDto.AccountCurrentBalance = currentBalance;
             foreach (var transfer in incomingTrasnfers)
             {
@@ -27,6 +27,21 @@ namespace CashFlow.Mappers
             foreach (var transfer in outgoingTransfers)
             {
                 accountDto.OutgoingTransfers.Add(TransferMapper.Map(transfer));
+            }
+            int numberOfDays = (int)Math.Ceiling((DateTime.Now - startBalance.StartDate).TotalDays);
+            DateTime accountBalanceHistoryDate = startBalance.StartDate;
+            decimal historyBalance = startBalance.Balance;
+            for (int i = 0; i < numberOfDays; i++)
+            {
+                historyBalance = historyBalance
+                    + incomingTrasnfers.Where(t => t.TransferDate.Date == accountBalanceHistoryDate.Date).Sum(t => t.Amount)
+                    - outgoingTransfers.Where(t => t.TransferDate.Date == accountBalanceHistoryDate.Date).Sum(t => t.Amount);
+                accountDto.AccountBalanceHistory.Add(new AccountBalanceHistoryDto
+                {
+                    BalanceDate = accountBalanceHistoryDate,
+                    Balance = historyBalance
+                });
+                accountBalanceHistoryDate = accountBalanceHistoryDate.AddDays(1);
             }
             return accountDto;
         }

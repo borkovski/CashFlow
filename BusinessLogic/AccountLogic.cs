@@ -66,10 +66,10 @@ namespace CashFlow.BusinessLogic
                     AccountBalance lastAccountBalance = efAccount.AccountBalance.OrderByDescending(b => b.StartDate).First();
                     AccountHistoryDto account = AccountHistoryMapper.Map(
                         efAccount,
-                        lastAccountBalance.Balance,
+                        lastAccountBalance,
                         lastAccountBalance.Balance - efAccount.TransferAccountFrom.Sum(t => t.Amount) + efAccount.TransferAccountTo.Sum(t => t.Amount),
-                        efAccount.TransferAccountTo,
-                        efAccount.TransferAccountFrom);
+                        efAccount.TransferAccountTo.OrderByDescending(t => t.TransferDate),
+                        efAccount.TransferAccountFrom.OrderByDescending(t => t.TransferDate));
                     return account;
                 }
                 else

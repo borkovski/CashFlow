@@ -13,7 +13,7 @@ export class TransferService extends BaseService<Transfer> {
     getTransferList(): Promise<Transfer[]> {
         return this.getList().then(transfers => {
             transfers.map((transfer) => {
-                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
+                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD HH:mm:ss');
             });
             return transfers;
         });
@@ -22,7 +22,7 @@ export class TransferService extends BaseService<Transfer> {
     getTransfer(transferId: number): Promise<Transfer> {
         return this.get(transferId).then(transfer => {
             if (transfer) {
-                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD hh:mm:ss');
+                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD HH:mm:ss');
                 return transfer;
             }
         })
