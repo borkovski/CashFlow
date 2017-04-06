@@ -22,7 +22,7 @@ export class TransferService extends BaseService<Transfer> {
     getTransfer(transferId: number): Promise<Transfer> {
         return this.get(transferId).then(transfer => {
             if (transfer) {
-                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD HH:mm:ss');
+                transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DDTHH:mm:ss');
                 return transfer;
             }
         })

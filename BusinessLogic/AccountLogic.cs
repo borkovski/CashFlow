@@ -58,8 +58,8 @@ namespace CashFlow.BusinessLogic
             {
                 DataAccess.EF.Account efAccount = context.Account
                     .Include(a => a.AccountBalance)
-                    .Include(a => a.TransferAccountFrom)
-                    .Include(a => a.TransferAccountTo)
+                    .Include(a => a.TransferAccountFrom).ThenInclude(t => t.AccountTo)
+                    .Include(a => a.TransferAccountTo).ThenInclude(t => t.AccountFrom)
                     .SingleOrDefault(t => t.Id == accountId);
                 if (efAccount != null)
                 {

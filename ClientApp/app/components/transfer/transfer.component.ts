@@ -46,6 +46,8 @@ export class TransferComponent {
                     accountPromise,
                     transferPromise
                 ]).then(value => {
+                    delete value[1].accountFrom;
+                    delete value[1].accountTo;
                     this.myForm.setValue(value[1]);
                 })
             }

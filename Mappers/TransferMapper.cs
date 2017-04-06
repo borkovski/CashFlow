@@ -13,7 +13,9 @@ namespace CashFlow.Mappers
             }
             TransferDto transferDto = new TransferDto();
             transferDto.AccountFromId = transfer.AccountFromId;
+            transferDto.AccountFrom = transfer.AccountFrom.Name;
             transferDto.AccountToId = transfer.AccountToId;
+            transferDto.AccountTo = transfer.AccountTo.Name;
             transferDto.Amount = transfer.Amount;
             transferDto.Id = transfer.Id;
             transferDto.Title = transfer.Name;

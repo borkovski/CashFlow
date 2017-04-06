@@ -8,7 +8,7 @@
         <label class="control-label col-lg-2" for="titleInput">
             Title
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control" 
                    type="text"
                    id="titleInput"
@@ -20,7 +20,7 @@
         <label class="control-label col-lg-2" for="accountFromInput">
             Account from
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <select class="form-control"
                     id="accountFromInput"
                     [formControl]="myForm.controls['accountFromId']">
@@ -32,7 +32,7 @@
         <label class="control-label col-lg-2" for="accountToInput">
             Account to
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <select class="form-control"
                     id="accountToInput"
                     [formControl]="myForm.controls['accountToId']">
@@ -44,7 +44,7 @@
         <label class="control-label col-lg-2" for="amountInput">
             Amount
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
                    type="number"
                    min="1"
@@ -58,11 +58,10 @@
         <label class="control-label col-lg-2" for="dateInput">
             Transfer date
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
-                   type="text"
+                   type="datetime-local"
                    id="dateInput"
-                   placeholder="YYYY-MM-DD"
                    [formControl]="myForm.controls['transferDate']" />
         </div>
     </div>

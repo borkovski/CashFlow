@@ -1,6 +1,7 @@
 ﻿using CashFlow.BusinessObjects;
 using CashFlow.DataAccess.EF;
 using CashFlow.Mappers;
+using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -13,6 +14,8 @@ namespace CashFlow.BusinessLogic
             using (var context = new CashFlowContext())
             {
                 List<TransferDto> transfers = context.Transfer
+                    .Include(t => t.AccountFrom)
+                    .Include(t => t.AccountTo)
                     .AsEnumerable()
                     .Select<DataAccess.EF.Transfer, TransferDto>(t => TransferMapper.Map(t))
                     .OrderByDescending(t => t.TransferDate)
@@ -25,7 +28,10 @@ namespace CashFlow.BusinessLogic
         {
             using (var context = new CashFlowContext())
             {
-                DataAccess.EF.Transfer efTransfer = context.Transfer.SingleOrDefault(t => t.Id == id);
+                DataAccess.EF.Transfer efTransfer = context.Transfer
+                    .Include(t => t.AccountFrom)
+                    .Include(t => t.AccountTo)
+                    .SingleOrDefault(t => t.Id == id);
                 if (efTransfer != null)
                 {
                     TransferDto transfer = TransferMapper.Map(efTransfer);
