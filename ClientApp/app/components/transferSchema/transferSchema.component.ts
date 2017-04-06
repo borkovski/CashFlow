@@ -2,9 +2,11 @@
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Http, Response, RequestOptions, Headers } from '@angular/http';
 import { TransferSchema } from '../../models/transferSchema/transferSchema.model';
+import { TransferPeriod } from '../../models/transferSchema/transferPeriod.model';
 import { Account } from '../../models/account/account.model';
 import { Router, ActivatedRoute } from '@angular/router';
 import { TransferSchemaService } from '../../services/transferSchema/transferSchema.service';
+import { TransferPeriodService } from '../../services/transferSchema/transferPeriod.service';
 import { AccountService } from '../../services/account/account.service';
 
 @Component({
@@ -14,6 +16,7 @@ import { AccountService } from '../../services/account/account.service';
 export class TransferSchemaComponent {
     id: number;
     accounts: Account[] = [];
+    transferPeriods: TransferPeriod[] = [];
     myForm: FormGroup;
     submitted: boolean = false;
     saved: boolean = false;
@@ -23,6 +26,7 @@ export class TransferSchemaComponent {
         private fb: FormBuilder,
         private route: ActivatedRoute,
         private transferSchemaService: TransferSchemaService,
+        private transferPeriodService: TransferPeriodService,
         private accountService: AccountService,
         private router: Router) {
         this.myForm = fb.group({
@@ -40,14 +44,18 @@ export class TransferSchemaComponent {
     ngOnInit(): void {
         var accountPromise: Promise<Account[]> = this.accountService.getAccountList()
             .then(accounts => this.accounts = accounts);
+        var transferPeriodPromise: Promise<TransferPeriod[]> = this.transferPeriodService.getTransferPeriodList()
+            .then(transferPeriods => this.transferPeriods = transferPeriods);
         this.route.queryParams.subscribe(params => {
             this.id = params['id'];
             if (this.id) {
                 var transferSchemaPromise: Promise<TransferSchema> = this.transferSchemaService.getTransferSchema(this.id);
                 Promise.all([
                     accountPromise,
-                    transferSchemaPromise
+                    transferSchemaPromise,
+                    transferPeriodPromise
                 ]).then(value => {
+                    delete value[1].lastTransferDate;
                     this.myForm.setValue(value[1]);
                 })
             }

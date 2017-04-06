@@ -18,6 +18,7 @@ import { TransferSchemaComponent } from './components/transferSchema/transferSch
 import { AccountService } from './services/account/account.service';
 import { TransferService } from './services/transfer/transfer.service';
 import { TransferSchemaService } from './services/transferSchema/transferSchema.service';
+import { TransferPeriodService } from './services/transferSchema/transferPeriod.service';
 
 @NgModule({
     bootstrap: [ AppComponent ],
@@ -34,7 +35,7 @@ import { TransferSchemaService } from './services/transferSchema/transferSchema.
         TransferSchemaListComponent,
         TransferSchemaComponent
     ],
-    providers: [TransferService, AccountService, TransferSchemaService],
+    providers: [TransferService, AccountService, TransferSchemaService, TransferPeriodService],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         FormsModule,

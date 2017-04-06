@@ -8,7 +8,7 @@
         <label class="control-label col-lg-2" for="titleInput">
             Title
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
                    type="text"
                    id="titleInput"
@@ -20,7 +20,7 @@
         <label class="control-label col-lg-2" for="accountFromInput">
             Account from
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <select class="form-control"
                     id="accountFromInput"
                     [formControl]="myForm.controls['accountFromId']">
@@ -32,7 +32,7 @@
         <label class="control-label col-lg-2" for="accountToInput">
             Account to
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <select class="form-control"
                     id="accountToInput"
                     [formControl]="myForm.controls['accountToId']">
@@ -44,7 +44,7 @@
         <label class="control-label col-lg-2" for="amountInput">
             Amount
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
                    type="number"
                    min="1"
@@ -58,33 +58,33 @@
         <label class="control-label col-lg-2" for="startDateInput">
             Transfer start date
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
-                   type="text"
+                   type="datetime-local"
                    id="startDateInput"
                    placeholder="YYYY-MM-DD hh:mm:ss"
                    [formControl]="myForm.controls['transferStartDate']" />
         </div>
     </div>
     <div class="form-group" [class.has-error]="!myForm.controls['transferPeriod'].valid && (myForm.controls['transferPeriod'].touched || submitted)">
-        <label class="control-label col-lg-2" for="datePeriodInput">
+        <label class="control-label col-lg-2" for="transferPeriodInput">
             Transfer period
         </label>
-        <div class="col-lg-2">
-            <input class="form-control"
-                   type="text"
-                   id="datePeriodInput"
-                   placeholder="1"
-                   [formControl]="myForm.controls['transferPeriod']" />
+        <div class="col-lg-3">
+            <select class="form-control"
+                    id="transferPeriodInput"
+                    [formControl]="myForm.controls['transferPeriod']">
+                <option *ngFor="let period of this.transferPeriods" value="{{period.id}}">{{period.name}}</option>
+            </select>
         </div>
     </div>
     <div class="form-group" [class.has-error]="!myForm.controls['transferEndDate'].valid && (myForm.controls['transferEndDate'].touched || submitted)">
         <label class="control-label col-lg-2" for="endDateInput">
             Transfer end date
         </label>
-        <div class="col-lg-2">
+        <div class="col-lg-3">
             <input class="form-control"
-                   type="text"
+                   type="datetime-local"
                    id="endDateInput"
                    placeholder="YYYY-MM-DD hh:mm:ss"
                    [formControl]="myForm.controls['transferEndDate']" />

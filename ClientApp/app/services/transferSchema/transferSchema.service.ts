@@ -17,9 +17,9 @@ export class TransferSchemaService extends BaseService<TransferSchema> {
     getTransferSchema(transferSchemaId: number): Promise<TransferSchema> {
         return this.get(transferSchemaId).then(transferSchema => {
             if (transferSchema) {
-                transferSchema.transferStartDate = moment.utc(transferSchema.transferStartDate).local().format('YYYY-MM-DD');
-                transferSchema.transferEndDate = moment.utc(transferSchema.transferEndDate).local().format('YYYY-MM-DD');
-                transferSchema.lastTransferDate = moment.utc(transferSchema.lastTransferDate).local().format('YYYY-MM-DD');
+                transferSchema.transferStartDate = moment.utc(transferSchema.transferStartDate).local().format('YYYY-MM-DDTHH:mm:ss');
+                transferSchema.transferEndDate = moment.utc(transferSchema.transferEndDate).local().format('YYYY-MM-DDTHH:mm:ss');
+                transferSchema.lastTransferDate = moment.utc(transferSchema.lastTransferDate).local().format('YYYY-MM-DDTHH:mm:ss');
                 return transferSchema;
             }
         })

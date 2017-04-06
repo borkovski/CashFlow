@@ -27,7 +27,7 @@ namespace CashFlow.Mappers
             {
                 transferSchemaDto.TransferPeriod = (TransferPeriod)transfer.TransferPeriod;
             }
-            transferSchemaDto.TransferStartDate = transfer.TransferStartDate.Add(transfer.TransferTime).ToUniversalTime();
+            transferSchemaDto.TransferStartDate = transfer.TransferStartDate.ToUniversalTime();
             return transferSchemaDto;
         }
 
@@ -51,8 +51,7 @@ namespace CashFlow.Mappers
                 transferSchema.TransferEndDate = transferSchemaDto.TransferEndDate.Value.ToLocalTime();
             }
             transferSchema.TransferPeriod = (int)transferSchemaDto.TransferPeriod;
-            transferSchema.TransferStartDate = transferSchemaDto.TransferStartDate.ToLocalTime().Date;
-            transferSchema.TransferTime = transferSchemaDto.TransferStartDate.ToLocalTime().TimeOfDay;
+            transferSchema.TransferStartDate = transferSchemaDto.TransferStartDate.ToLocalTime();
             return transferSchema;
         }
     }

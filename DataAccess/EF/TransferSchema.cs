@@ -13,7 +13,6 @@ namespace CashFlow.DataAccess.EF
         public DateTime TransferStartDate { get; set; }
         public int TransferPeriod { get; set; }
         public DateTime? TransferEndDate { get; set; }
-        public TimeSpan TransferTime { get; set; }
         public DateTime? LastTransferDate { get; set; }
 
         public virtual Account AccountFrom { get; set; }
