@@ -1,0 +1,22 @@
+﻿<h2>Pending transfers from schemas</h2>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <td>Account from</td>
+            <td>Account to</td>
+            <td>Title</td>
+            <td>Amount</td>
+            <td>Transfer date</td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let transfer of transfers" [routerLink]="['/transfer']" [queryParams]="{ id: transfer.id, isFromPending: true }">
+            <td>{{transfer.accountFrom}}</td>
+            <td>{{transfer.accountTo}}</td>
+            <td>{{transfer.title}}</td>
+            <td>{{transfer.amount}}</td>
+            <td>{{transfer.transferDate}}</td>
+        </tr>
+    </tbody>
+</table>

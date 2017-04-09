@@ -14,10 +14,12 @@ import { TransferListComponent } from './components/transfer/transferList.compon
 import { TransferComponent } from './components/transfer/transfer.component';
 import { TransferSchemaListComponent } from './components/transferSchema/transferSchemaList.component';
 import { TransferSchemaComponent } from './components/transferSchema/transferSchema.component';
+import { TransferPendingListComponent } from './components/transferSchema/transferPendingList.component';
 
 import { AccountService } from './services/account/account.service';
 import { TransferService } from './services/transfer/transfer.service';
 import { TransferSchemaService } from './services/transferSchema/transferSchema.service';
+import { TransferPendingService } from './services/transferSchema/transferPending.service';
 import { TransferPeriodService } from './services/transferSchema/transferPeriod.service';
 
 @NgModule({
@@ -33,9 +35,10 @@ import { TransferPeriodService } from './services/transferSchema/transferPeriod.
         TransferListComponent,
         TransferComponent,
         TransferSchemaListComponent,
-        TransferSchemaComponent
+        TransferSchemaComponent,
+        TransferPendingListComponent
     ],
-    providers: [TransferService, AccountService, TransferSchemaService, TransferPeriodService],
+    providers: [TransferService, AccountService, TransferSchemaService, TransferPeriodService, TransferPendingService],
     imports: [
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         FormsModule,
