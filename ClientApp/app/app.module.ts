@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { UniversalModule } from 'angular2-universal';
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { HttpModule, JsonpModule } from '@angular/http';
 import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -40,7 +42,12 @@ import { TransferPeriodService } from './services/transferSchema/transferPeriod.
     ],
     providers: [TransferService, AccountService, TransferSchemaService, TransferPeriodService, TransferPendingService],
     imports: [
-        UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
+        BrowserModule.withServerTransition({
+            appId: 'cashFlow'
+        }),
+        BrowserAnimationsModule,
+        HttpModule,
+        JsonpModule,
         FormsModule,
         ReactiveFormsModule,
         RouterModule.forRoot([

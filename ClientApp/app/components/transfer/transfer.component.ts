@@ -8,6 +8,8 @@ import { TransferService } from '../../services/transfer/transfer.service';
 import { AccountService } from '../../services/account/account.service';
 import { TransferPendingService } from '../../services/transferSchema/transferPending.service';
 
+import * as moment from 'moment';
+
 @Component({
     selector: 'transfer',
     template: require('./transfer.component.html')
@@ -34,7 +36,7 @@ export class TransferComponent {
             'accountToId': [null, Validators.required],
             'title': [null, Validators.required],
             'amount': [null, Validators.required],
-            'transferDate': [null, Validators.required]
+            'transferDate': [moment().format('YYYY-MM-DDTHH:mm'), Validators.required]
         });
     }
 

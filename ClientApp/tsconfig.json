@@ -1,5 +1,4 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
     "moduleResolution": "node",
     "target": "es5",
