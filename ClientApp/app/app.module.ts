@@ -4,6 +4,7 @@ import { UniversalModule } from 'angular2-universal';
 import { AppComponent } from './components/app/app.component'
 import { NavMenuComponent } from './components/navmenu/navmenu.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { ToastModule } from 'ng2-toastr/ng2-toastr';
 
 import { HomeComponent } from './components/home/home.component';
 import { AccountListComponent } from './components/account/accountList.component';
@@ -43,6 +44,7 @@ import { TransferPeriodService } from './services/transferSchema/transferPeriod.
         UniversalModule, // Must be first import. This automatically imports BrowserModule, HttpModule, and JsonpModule too.
         FormsModule,
         ReactiveFormsModule,
+        ToastModule.forRoot(),
         RouterModule.forRoot([
             { path: '', redirectTo: 'home', pathMatch: 'full' },
             { path: 'home', component: HomeComponent },

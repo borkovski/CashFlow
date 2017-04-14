@@ -7,6 +7,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { AccountService } from '../../services/account/account.service';
 import { TransferPendingService } from '../../services/transferSchema/transferPending.service';
+import { ToastsManager } from 'ng2-toastr/ng2-toastr';
+import * as moment from 'moment';
 
 @Component({
     selector: 'transfer',
@@ -27,14 +29,15 @@ export class TransferComponent {
         private transferService: TransferService,
         private accountService: AccountService,
         private transferPendingService: TransferPendingService,
-        private router: Router) {
+        private router: Router,
+        private toastr: ToastsManager) {
         this.myForm = fb.group({
             'id': [null],
             'accountFromId': [null, Validators.required],
             'accountToId': [null, Validators.required],
             'title': [null, Validators.required],
             'amount': [null, Validators.required],
-            'transferDate': [null, Validators.required]
+            'transferDate': [moment().format('YYYY-MM-DDTHH:mm'), Validators.required]
         });
     }
 
@@ -72,6 +75,7 @@ export class TransferComponent {
     }
 
     onSubmit(value: any): void {
+        this.toastr.error('This is not good!', 'Oops!');
         this.saved = false;
         this.submitted = true;
         if (this.myForm.valid) {

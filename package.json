@@ -39,6 +39,7 @@
     "webpack-hot-middleware": "^2.10.0",
     "webpack-merge": "^0.14.1",
     "zone.js": "^0.6.21",
-    "moment": "2.18.1"
+    "moment": "2.18.1",
+    "ng2-toastr": "1.6.0"
   }
 }
