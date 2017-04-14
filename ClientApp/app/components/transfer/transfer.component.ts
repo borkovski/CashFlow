@@ -20,7 +20,6 @@ export class TransferComponent {
     accounts: Account[] = [];
     myForm: FormGroup;
     submitted: boolean = false;
-    saved: boolean = false;
 
     constructor(
         private http: Http,
@@ -75,8 +74,6 @@ export class TransferComponent {
     }
 
     onSubmit(value: any): void {
-        this.toastr.error('This is not good!', 'Oops!');
-        this.saved = false;
         this.submitted = true;
         if (this.myForm.valid) {
             let idPromise: Promise<number>;
@@ -90,13 +87,14 @@ export class TransferComponent {
                 idPromise
                     .then(id => {
                         if (id) {
-                            this.myForm.controls['id'].setValue(id);
-                            this.id = id;
-                            this.saved = true;
-                            this.isFromPending = false;
+                            this.toastr.success('Transfer saved!', 'Success!');
+                            this.router.navigate(['./transferList']);
                         }
                     });
             }
+        }
+        else {
+            this.toastr.error('Please fill in required fields', 'Oops!');
         }
     }
 
@@ -105,6 +103,7 @@ export class TransferComponent {
             this.transferService.deleteTransfer(this.id)
                 .then(ok => {
                     if (ok) {
+                        this.toastr.success('Transfer deleted!', 'Success!');
                         this.router.navigate(['./transferList']);
                     }
                 });
