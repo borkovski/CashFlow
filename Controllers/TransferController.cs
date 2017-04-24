@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using CashFlow.BusinessObjects;
 using CashFlow.BusinessLogic;
+using CashFlow.BusinessObjects.Utilities;
 
 namespace CashFlow.Controllers
 {
@@ -10,9 +11,15 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public List<TransferDto> Get()
+        public List<TransferDto> Get(string sortPropertyName = "transferdate", bool isDescending = false, int? skip = null, int? take = null)
         {
-            return new TransferLogic().GetAll();
+            DataFilter dataFilter = new DataFilter();
+            dataFilter.SortPropertyName = sortPropertyName;
+            //dataFilter.FilterProperties.Add(new KeyValuePair<string, string>("Name", "Zakupy"));
+            dataFilter.IsDescending = isDescending;
+            dataFilter.Skip = skip;
+            dataFilter.Take = take;
+            return new TransferLogic().Get(dataFilter);
         }
 
         // GET api/values/5

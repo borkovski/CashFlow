@@ -1,25 +1,15 @@
 ﻿<h2>My Transfers</h2>
 <div class="loader" *ngIf="isLoading"></div>
+<button class="btn btn-success" type="submit" [routerLink]="['/transfer']">Add new</button>
 <table class="table table-hover" *ngIf="!isLoading">
     <thead>
         <tr>
-            <td>Id</td>
-            <td>Title</td>
-            <td>Account from</td>
-            <td>Account to</td>
-            <td>Amount</td>
-            <td>Date</td>
+            <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions" (click)="reload(columnDefinition.dataKey)">{{columnDefinition.dataHeader}}</td>
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let transfer of transfers" [routerLink]="['/transfer']" [queryParams]="{ id: transfer.id }">
-            <td>{{transfer.id}}</td>
-            <td>{{transfer.title}}</td>
-            <td>{{transfer.accountFrom}}</td>
-            <td>{{transfer.accountTo}}</td>
-            <td>{{transfer.amount}}</td>
-            <td>{{transfer.transferDate}}</td>
+        <tr *ngFor="let data of gridDefinition.data" [routerLink]="['/transfer']" [queryParams]="{ id: data.id }">
+            <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions">{{data[columnDefinition.dataKey]}}</td>
         </tr>
     </tbody>
 </table> 
-<button class="btn btn-success" type="submit" [routerLink]="['/transfer']">Add new</button>

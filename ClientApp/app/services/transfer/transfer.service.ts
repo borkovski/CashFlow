@@ -4,14 +4,15 @@ import { BaseService } from '../base/base.service';
 import * as moment from 'moment';
 
 import 'rxjs/add/operator/toPromise';
+import { DataFilter } from '../../models/grid/dataFilter.model';
 import { Transfer } from '../../models/transfer/transfer.model';
 
 @Injectable()
 export class TransferService extends BaseService<Transfer> {
     protected url = 'http://localhost:10503/api/Transfer';
     
-    getTransferList(): Promise<Transfer[]> {
-        return this.getList().then(transfers => {
+    getTransferList(dataFilter: DataFilter): Promise<Transfer[]> {
+        return this.getList(dataFilter).then(transfers => {
             transfers.map((transfer) => {
                 transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD HH:mm:ss');
             });

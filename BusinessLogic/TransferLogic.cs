@@ -1,4 +1,6 @@
-﻿using CashFlow.BusinessObjects;
+﻿using CashFlow.BusinessLogic.Utilities;
+using CashFlow.BusinessObjects;
+using CashFlow.BusinessObjects.Utilities;
 using CashFlow.DataAccess.EF;
 using CashFlow.Mappers;
 using Microsoft.EntityFrameworkCore;
@@ -9,16 +11,16 @@ namespace CashFlow.BusinessLogic
 {
     public class TransferLogic
     {
-        public List<TransferDto> GetAll()
+        public List<TransferDto> Get(DataFilter dataFilter)
         {
             using (var context = new CashFlowContext())
             {
                 List<TransferDto> transfers = context.Transfer
                     .Include(t => t.AccountFrom)
                     .Include(t => t.AccountTo)
+                    .Filter<DataAccess.EF.Transfer, TransferDto>(dataFilter)
                     .AsEnumerable()
                     .Select<DataAccess.EF.Transfer, TransferDto>(t => TransferMapper.Map(t))
-                    .OrderByDescending(t => t.TransferDate)
                     .ToList();
                 return transfers;
             }
