@@ -14,3 +14,8 @@ export class KeyValuePair {
     public Key: string;
     public Value: string;
 }
+
+export class PagedList<T> {
+    public items: T[];
+    public totalCount: number;
+}

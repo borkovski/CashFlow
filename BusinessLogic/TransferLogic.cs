@@ -11,17 +11,20 @@ namespace CashFlow.BusinessLogic
 {
     public class TransferLogic
     {
-        public List<TransferDto> Get(DataFilter dataFilter)
+        public PagedList<TransferDto> Get(DataFilter dataFilter)
         {
             using (var context = new CashFlowContext())
             {
-                List<TransferDto> transfers = context.Transfer
+                PagedList<TransferDto> transfers = new PagedList<TransferDto>(context.Transfer
                     .Include(t => t.AccountFrom)
                     .Include(t => t.AccountTo)
                     .Filter<DataAccess.EF.Transfer, TransferDto>(dataFilter)
                     .AsEnumerable()
                     .Select<DataAccess.EF.Transfer, TransferDto>(t => TransferMapper.Map(t))
-                    .ToList();
+                    .ToList());
+                transfers.TotalCount = context.Transfer
+                    .Include(t => t.AccountFrom)
+                    .Include(t => t.AccountTo).Filter<Transfer, TransferDto>(dataFilter.FilterProperties).Count();
                 return transfers;
             }
         }

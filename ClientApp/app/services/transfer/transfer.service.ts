@@ -4,19 +4,19 @@ import { BaseService } from '../base/base.service';
 import * as moment from 'moment';
 
 import 'rxjs/add/operator/toPromise';
-import { DataFilter } from '../../models/grid/dataFilter.model';
+import { DataFilter, PagedList } from '../../models/grid/dataFilter.model';
 import { Transfer } from '../../models/transfer/transfer.model';
 
 @Injectable()
 export class TransferService extends BaseService<Transfer> {
     protected url = 'http://localhost:10503/api/Transfer';
     
-    getTransferList(dataFilter: DataFilter): Promise<Transfer[]> {
-        return this.getList(dataFilter).then(transfers => {
-            transfers.map((transfer) => {
+    getTransferList(dataFilter: DataFilter): Promise<PagedList<Transfer>> {
+        return this.getPagedList(dataFilter).then(pagedList => {
+            pagedList.items.map((transfer) => {
                 transfer.transferDate = moment.utc(transfer.transferDate).local().format('YYYY-MM-DD HH:mm:ss');
             });
-            return transfers;
+            return pagedList;
         });
     }
 

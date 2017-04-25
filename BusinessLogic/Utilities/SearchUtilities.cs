@@ -20,7 +20,7 @@ namespace CashFlow.BusinessLogic.Utilities
 
         //TSource - Transfer (EF)
         //TResult - TransferDTO (with attribute)
-        private static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, IEnumerable<KeyValuePair<string, string>> filter)
+        public static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, IEnumerable<KeyValuePair<string, string>> filter)
         {
             //foreach (var filterField in filter)
             //{

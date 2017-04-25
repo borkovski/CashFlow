@@ -2,7 +2,7 @@
 import { Headers, Http } from '@angular/http';
 import * as moment from 'moment';
 
-import { DataFilter } from '../../models/grid/dataFilter.model';
+import { DataFilter, PagedList } from '../../models/grid/dataFilter.model';
 
 import 'rxjs/add/operator/toPromise';
 
@@ -15,6 +15,12 @@ export abstract class BaseService<T> {
     protected getList(dataFilter: DataFilter = null): Promise<T[]> {
         return this.http.get(this.url + this.parseDataFilter(dataFilter)).toPromise()
             .then(response => response.json() as T[])
+            .catch(this.handleError);
+    }
+
+    protected getPagedList(dataFilter: DataFilter = null): Promise<PagedList<T>> {
+        return this.http.get(this.url + this.parseDataFilter(dataFilter)).toPromise()
+            .then(response => response.json() as PagedList<T>)
             .catch(this.handleError);
     }
 

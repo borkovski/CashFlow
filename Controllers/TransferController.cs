@@ -11,7 +11,7 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public List<TransferDto> Get(string sortPropertyName = "transferdate", bool isDescending = false, int? skip = null, int? take = null)
+        public PagedList<TransferDto> Get(string sortPropertyName = "transferdate", bool isDescending = false, int? skip = null, int? take = null)
         {
             DataFilter dataFilter = new DataFilter();
             dataFilter.SortPropertyName = sortPropertyName;

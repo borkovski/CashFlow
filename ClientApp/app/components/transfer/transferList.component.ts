@@ -22,10 +22,11 @@ export class TransferListComponent implements OnInit {
             new ColumnDefinition('amount', 'Amount', null, false),
             new ColumnDefinition('transferDate', 'Date', null, false),
         ];
-        this.gridDefinition.dataFilter.take = 50;
+        this.gridDefinition.dataFilter.take = 10;
         this.gridDefinition.dataFilter.skip = 0;
         this.gridDefinition.dataFilter.sortPropertyName = 'id';
         this.gridDefinition.dataFilter.isDescending = true;
+        this.gridDefinition.pageSizes.push(100);
     }
 
     ngOnInit(): void {
@@ -35,15 +36,35 @@ export class TransferListComponent implements OnInit {
     loadData() {
         this.isLoading = true;
         this.transferService.getTransferList(this.gridDefinition.dataFilter)
-            .then(transfers => {
-                this.transfers = transfers;
+            .then(pagedList => {
+                this.transfers = pagedList.items;
                 this.isLoading = false;
                 this.gridDefinition.data = this.transfers;
+                this.gridDefinition.totalCount = pagedList.totalCount;
             });
     }
 
     reload(clickedHeader: string) {
+        if (this.gridDefinition.dataFilter.sortPropertyName == clickedHeader) {
+            this.gridDefinition.dataFilter.isDescending = !this.gridDefinition.dataFilter.isDescending;
+        }
         this.gridDefinition.dataFilter.sortPropertyName = clickedHeader;
+        this.loadData();
+    }
+
+    setPage(page: number) {
+        if (page < 1
+            || page > this.gridDefinition.getTotalPages()
+            || page == this.gridDefinition.getCurrentPageNumber()) {
+            return;
+        }
+        this.gridDefinition.setCurrentPageNumber(page);
+        this.loadData();
+    }
+
+    setPageSize(pageSize: number) {
+        this.gridDefinition.dataFilter.take = pageSize;
+        this.gridDefinition.dataFilter.skip = 0;
         this.loadData();
     }
 }
