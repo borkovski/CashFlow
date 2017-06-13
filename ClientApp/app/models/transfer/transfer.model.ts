@@ -1,9 +1,9 @@
 ﻿export class Transfer {
     id: number;
     accountFromId: number;
-    accountFrom: number;
+    accountFrom: string;
     accountToId: number;
-    accountTo: number;
+    accountTo: string;
     title: string;
     amount: number;
     transferDate: string;

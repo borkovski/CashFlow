@@ -17,27 +17,31 @@ namespace CashFlow.BusinessLogic.Utilities
                 .Sort<TSource, TResult>(dataFilter.SortPropertyName, dataFilter.IsDescending)
                 .Page(dataFilter.Skip, dataFilter.Take);
         }
-
-        //TSource - Transfer (EF)
-        //TResult - TransferDTO (with attribute)
+        
+        //TODO - add range ('_from','_to') handling
         public static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, IEnumerable<KeyValuePair<string, string>> filter)
         {
-            //foreach (var filterField in filter)
-            //{
-            //    PropertyInfo efProperty = GetPropertyInfosWithMapping<TSource, TResult>(filterField.Key);
-            //    if(efProperty != null)
-            //    {
-            //        try
-            //        {
-            //            object convertedFilterValue = Convert.ChangeType(filterField.Value, efProperty.PropertyType);
-            //            queryable = queryable.Where(p => efProperty.GetValue(p).Equals(convertedFilterValue));
-            //        }
-            //        catch(Exception e)
-            //        {
-            //            //silently omit conversion errors
-            //        }
-            //    }
-            //}
+            foreach (var filterField in filter)
+            {
+                string propertyName = GetPropertyInfosWithMapping<TSource, TResult>(filterField.Key);
+                if (propertyName != null)
+                {
+                    PropertyInfo efProperty = GetPropertyInfo(typeof(TSource), propertyName);
+                    if (efProperty != null)
+                    {
+                        object convertedFilterValue = Convert.ChangeType(filterField.Value, efProperty.PropertyType);
+                        if (efProperty.PropertyType == typeof(string))
+                        {
+                            queryable = queryable.Where(p => ((string)efProperty.GetValue(p)).Contains((string)convertedFilterValue));
+                        }
+                        else if (efProperty.PropertyType == typeof(int)
+                            || efProperty.PropertyType == typeof(long))
+                        {
+                            queryable = queryable.Where(p => efProperty.GetValue(p).Equals(convertedFilterValue));
+                        }
+                    }
+                }
+            }
             return queryable;
         }
 

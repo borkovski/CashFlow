@@ -64,6 +64,11 @@ export abstract class BaseService<T> {
             if (dataFilter.take) {
                 filterString = this.addParameter(filterString, "take=" + dataFilter.take);
             }
+            if (dataFilter.filterProperties && dataFilter.filterProperties.length > 0) {
+                for (var i = 0; i < dataFilter.filterProperties.length; i++) {
+                    filterString = this.addParameter(filterString, dataFilter.filterProperties[i].Key + '=' + dataFilter.filterProperties[i].Value);
+                }
+            }
         }
         return filterString;
     }

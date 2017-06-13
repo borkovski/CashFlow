@@ -3,6 +3,7 @@ import { Transfer } from '../../models/transfer/transfer.model';
 import { TransferService } from '../../services/transfer/transfer.service';
 import { GridDefinition } from '../../models/grid/gridDefinition.model';
 import { ColumnDefinition } from '../../models/grid/columnDefinition.model';
+import { KeyValuePair } from '../../models/grid/dataFilter.model';
 
 @Component({
     selector: 'transferList',
@@ -15,12 +16,12 @@ export class TransferListComponent implements OnInit {
 
     constructor(private transferService: TransferService) {
         this.gridDefinition.columnDefinitions = [
-            new ColumnDefinition('id', 'Id', null, false),
-            new ColumnDefinition('title', 'Title', null, false),
-            new ColumnDefinition('accountFrom', 'Account from', null, false),
-            new ColumnDefinition('accountTo', 'Account to', null, false),
-            new ColumnDefinition('amount', 'Amount', null, false),
-            new ColumnDefinition('transferDate', 'Date', null, false),
+            new ColumnDefinition('id', 'Id', 'number', true),
+            new ColumnDefinition('title', 'Title', 'string', true),
+            new ColumnDefinition('accountFrom', 'Account from', 'dictionary', true),
+            new ColumnDefinition('accountTo', 'Account to', 'dictionary', true),
+            new ColumnDefinition('amount', 'Amount', 'number', true),
+            new ColumnDefinition('transferDate', 'Date', 'datetime-local', true),
         ];
         this.gridDefinition.dataFilter.take = 10;
         this.gridDefinition.dataFilter.skip = 0;
@@ -35,6 +36,10 @@ export class TransferListComponent implements OnInit {
 
     loadData() {
         this.isLoading = true;
+        var keyValuePair = new KeyValuePair();
+        keyValuePair.Key = "accountFromId";
+        keyValuePair.Value = "1";
+        this.gridDefinition.dataFilter.filterProperties.push(keyValuePair);
         this.transferService.getTransferList(this.gridDefinition.dataFilter)
             .then(pagedList => {
                 this.transfers = pagedList.items;
@@ -44,11 +49,26 @@ export class TransferListComponent implements OnInit {
             });
     }
 
-    reload(clickedHeader: string) {
-        if (this.gridDefinition.dataFilter.sortPropertyName == clickedHeader) {
-            this.gridDefinition.dataFilter.isDescending = !this.gridDefinition.dataFilter.isDescending;
+    reloadSort(columnDefinition: ColumnDefinition) {
+        if (columnDefinition.sortingEnabled) {
+            if (this.gridDefinition.dataFilter.sortPropertyName == columnDefinition.dataKey) {
+                this.gridDefinition.dataFilter.isDescending = !this.gridDefinition.dataFilter.isDescending;
+            }
+            this.gridDefinition.dataFilter.sortPropertyName = columnDefinition.dataKey;
+            this.loadData();
         }
-        this.gridDefinition.dataFilter.sortPropertyName = clickedHeader;
+    }
+
+    reloadFilter(dataKey: string, newValue) {
+        if (this.gridDefinition.dataFilter.filterProperties.find(p => p.Key == dataKey)) {
+            this.gridDefinition.dataFilter.filterProperties.find(p => p.Key == dataKey).Value = newValue;
+        }
+        else {
+            var keyValuePair: KeyValuePair = new KeyValuePair();
+            keyValuePair.Key = dataKey;
+            keyValuePair.Value = newValue;
+            this.gridDefinition.dataFilter.filterProperties.push(keyValuePair);
+        }
         this.loadData();
     }
 

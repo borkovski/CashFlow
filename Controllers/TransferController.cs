@@ -1,8 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using CashFlow.BusinessObjects;
 using CashFlow.BusinessLogic;
 using CashFlow.BusinessObjects.Utilities;
+using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
 
 namespace CashFlow.Controllers
 {
@@ -14,8 +16,15 @@ namespace CashFlow.Controllers
         public PagedList<TransferDto> Get(string sortPropertyName = "transferdate", bool isDescending = false, int? skip = null, int? take = null)
         {
             DataFilter dataFilter = new DataFilter();
+            Dictionary<string, StringValues> queryStringDictionary = QueryHelpers.ParseQuery(Request.QueryString.ToString());
+            foreach (var queryStringKey in queryStringDictionary)
+            {
+                foreach (var item in queryStringKey.Value)
+                {
+                    dataFilter.FilterProperties.Add(new KeyValuePair<string, string>(queryStringKey.Key, item));
+                }
+            }
             dataFilter.SortPropertyName = sortPropertyName;
-            //dataFilter.FilterProperties.Add(new KeyValuePair<string, string>("Name", "Zakupy"));
             dataFilter.IsDescending = isDescending;
             dataFilter.Skip = skip;
             dataFilter.Take = take;
