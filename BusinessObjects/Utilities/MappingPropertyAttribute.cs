@@ -8,6 +8,7 @@ namespace CashFlow.BusinessObjects.Utilities
     [AttributeUsage(AttributeTargets.Property)]
     public class MappingPropertyAttribute : Attribute
     {
+        public bool IsRange { get; set; }
         public string[] MappedPropertyPath { get; set; }
         public MappingPropertyAttribute(string[] mappedPropertyPath)
         {
@@ -16,6 +17,10 @@ namespace CashFlow.BusinessObjects.Utilities
         public MappingPropertyAttribute(string mappedProperty)
         {
             MappedPropertyPath = new string[] { mappedProperty };
+        }
+        public MappingPropertyAttribute(bool isRange)
+        {
+            IsRange = isRange;
         }
     }
 }

@@ -23,7 +23,20 @@ namespace CashFlow.BusinessLogic.Utilities
         {
             foreach (var filterField in filter)
             {
-                string propertyName = GetPropertyInfosWithMapping<TSource, TResult>(filterField.Key);
+                string filterFieldTrimmed = filterField.Key;
+                bool isFrom = false;
+                bool isTo = false;
+                if (filterFieldTrimmed.Contains("_from"))
+                {
+                    isFrom = true;
+                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf("_from"));
+                }
+                else if (filterFieldTrimmed.Contains("_to"))
+                {
+                    isTo = true;
+                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf("_to"));
+                }
+                string propertyName = GetPropertyInfosWithMapping<TSource, TResult>(filterFieldTrimmed, (isFrom | isTo));
                 if (propertyName != null)
                 {
                     PropertyInfo efProperty = GetPropertyInfo(typeof(TSource), propertyName);
@@ -34,10 +47,65 @@ namespace CashFlow.BusinessLogic.Utilities
                         {
                             queryable = queryable.Where(p => ((string)efProperty.GetValue(p)).Contains((string)convertedFilterValue));
                         }
-                        else if (efProperty.PropertyType == typeof(int)
-                            || efProperty.PropertyType == typeof(long))
+                        else if (efProperty.PropertyType == typeof(int))
                         {
-                            queryable = queryable.Where(p => efProperty.GetValue(p).Equals(convertedFilterValue));
+                            if (isFrom)
+                            {
+                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) >= (int)convertedFilterValue);
+                            }
+                            else if (isTo)
+                            {
+                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) <= (int)convertedFilterValue);
+                            }
+                            else
+                            {
+                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) == (int)convertedFilterValue);
+                            }
+                        }
+                        else if (efProperty.PropertyType == typeof(long))
+                        {
+                            if (isFrom)
+                            {
+                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) >= (long)convertedFilterValue);
+                            }
+                            else if (isTo)
+                            {
+                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) <= (long)convertedFilterValue);
+                            }
+                            else
+                            {
+                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) == (long)convertedFilterValue);
+                            }
+                        }
+                        else if (efProperty.PropertyType == typeof(decimal))
+                        {
+                            if (isFrom)
+                            {
+                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) >= (decimal)convertedFilterValue);
+                            }
+                            else if (isTo)
+                            {
+                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) <= (decimal)convertedFilterValue);
+                            }
+                            else
+                            {
+                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) == (decimal)convertedFilterValue);
+                            }
+                        }
+                        else if (efProperty.PropertyType == typeof(DateTime))
+                        {
+                            if (isFrom)
+                            {
+                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) >= (DateTime)convertedFilterValue);
+                            }
+                            else if (isTo)
+                            {
+                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) <= (DateTime)convertedFilterValue);
+                            }
+                            else
+                            {
+                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) == (DateTime)convertedFilterValue);
+                            }
                         }
                     }
                 }
@@ -69,7 +137,7 @@ namespace CashFlow.BusinessLogic.Utilities
             return queryable;
         }
 
-        private static string GetPropertyInfosWithMapping<TSource, TResult>(string propertyName)
+        private static string GetPropertyInfosWithMapping<TSource, TResult>(string propertyName, bool isRange = false)
         {
             PropertyInfo targetProperty = GetPropertyInfo(typeof(TResult), propertyName);
             if(targetProperty == null)
@@ -80,22 +148,37 @@ namespace CashFlow.BusinessLogic.Utilities
             string efProperty = string.Empty;
             if (mappingPropertyAttribute != null)
             {
-                for(int i = 0; i < mappingPropertyAttribute.MappedPropertyPath.Count(); i++)
+                if(isRange && !mappingPropertyAttribute.IsRange)
                 {
-                    if (i == 0)
+                    return null;
+                }
+                else if (mappingPropertyAttribute.MappedPropertyPath != null)
+                {
+                    for (int i = 0; i < mappingPropertyAttribute.MappedPropertyPath.Count(); i++)
                     {
-                        efProperty += mappingPropertyAttribute.MappedPropertyPath[i];
+                        if (i == 0)
+                        {
+                            efProperty += mappingPropertyAttribute.MappedPropertyPath[i];
+                        }
+                        else
+                        {
+                            efProperty += "." + mappingPropertyAttribute.MappedPropertyPath[i];
+                        }
                     }
-                    else
-                    {
-                        efProperty += "." + mappingPropertyAttribute.MappedPropertyPath[i];
-                    }
+                }
+                else
+                {
+                    efProperty = propertyName;
                 }
                 return efProperty;
             }
-            else
+            else if(!isRange)
             {
                 return propertyName;
+            }
+            else
+            {
+                return null;
             }
         }
 

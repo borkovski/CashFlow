@@ -14,7 +14,9 @@ namespace CashFlow.BusinessObjects
         public string AccountTo { get; set; }
         [MappingProperty("Name")]
         public string Title { get; set; }
+        [MappingProperty(true)]
         public decimal Amount { get; set; }
+        [MappingProperty(true)]
         public DateTime TransferDate { get; set; }
     }
 }
