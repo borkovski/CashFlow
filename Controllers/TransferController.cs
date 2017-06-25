@@ -5,6 +5,7 @@ using CashFlow.BusinessObjects.Utilities;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Primitives;
 using System.Collections.Generic;
+using CashFlow.BusinessLogic.Utilities;
 
 namespace CashFlow.Controllers
 {
@@ -13,24 +14,12 @@ namespace CashFlow.Controllers
     {
         // GET: api/values
         [HttpGet]
-        public PagedList<TransferDto> Get(string sortPropertyName = "transferdate", bool isDescending = false, int? skip = null, int? take = null)
+        public PagedList<TransferDto> Get()
         {
-            DataFilter dataFilter = new DataFilter();
-            Dictionary<string, StringValues> queryStringDictionary = QueryHelpers.ParseQuery(Request.QueryString.ToString());
-            foreach (var queryStringKey in queryStringDictionary)
-            {
-                foreach (var item in queryStringKey.Value)
-                {
-                    dataFilter.FilterProperties.Add(new KeyValuePair<string, string>(queryStringKey.Key, item));
-                }
-            }
-            dataFilter.SortPropertyName = sortPropertyName;
-            dataFilter.IsDescending = isDescending;
-            dataFilter.Skip = skip;
-            dataFilter.Take = take;
+            DataFilter dataFilter = new DataFilterUtilities().GetDataFilter(Request.QueryString.ToString(), "transferDate");
             return new TransferLogic().Get(dataFilter);
         }
-
+        
         // GET api/values/5
         [HttpGet("{id}")]
         public TransferDto Get(long id)

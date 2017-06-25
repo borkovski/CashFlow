@@ -8,33 +8,34 @@ using System.Threading.Tasks;
 
 namespace CashFlow.BusinessLogic.Utilities
 {
-    public static class SearchUtilities
+    internal static class SearchUtilities
     {
-        public static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, DataFilter dataFilter)
+        internal static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, DataFilter dataFilter)
         {
             return queryable
                 .Filter<TSource, TResult>(dataFilter.FilterProperties)
                 .Sort<TSource, TResult>(dataFilter.SortPropertyName, dataFilter.IsDescending)
                 .Page(dataFilter.Skip, dataFilter.Take);
         }
-        
-        //TODO - add range ('_from','_to') handling
-        public static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, IEnumerable<KeyValuePair<string, string>> filter)
+
+        internal static IQueryable<TSource> Filter<TSource, TResult>(this IQueryable<TSource> queryable, IEnumerable<KeyValuePair<string, string>> filter)
         {
             foreach (var filterField in filter)
             {
                 string filterFieldTrimmed = filterField.Key;
                 bool isFrom = false;
                 bool isTo = false;
-                if (filterFieldTrimmed.Contains("_from"))
+                string fromSuffix = "_from";
+                string toSuffix = "_to";
+                if (filterFieldTrimmed.Contains(fromSuffix))
                 {
                     isFrom = true;
-                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf("_from"));
+                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf(fromSuffix));
                 }
-                else if (filterFieldTrimmed.Contains("_to"))
+                else if (filterFieldTrimmed.Contains(toSuffix))
                 {
                     isTo = true;
-                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf("_to"));
+                    filterFieldTrimmed = filterFieldTrimmed.Substring(0, filterFieldTrimmed.IndexOf(toSuffix));
                 }
                 string propertyName = GetPropertyInfosWithMapping<TSource, TResult>(filterFieldTrimmed, (isFrom | isTo));
                 if (propertyName != null)
@@ -49,63 +50,19 @@ namespace CashFlow.BusinessLogic.Utilities
                         }
                         else if (efProperty.PropertyType == typeof(int))
                         {
-                            if (isFrom)
-                            {
-                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) >= (int)convertedFilterValue);
-                            }
-                            else if (isTo)
-                            {
-                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) <= (int)convertedFilterValue);
-                            }
-                            else
-                            {
-                                queryable = queryable.Where(p => (int)efProperty.GetValue(p) == (int)convertedFilterValue);
-                            }
+                            queryable = queryable.AddRangeComparison<TSource, int>(efProperty, convertedFilterValue, isFrom, isTo);
                         }
                         else if (efProperty.PropertyType == typeof(long))
                         {
-                            if (isFrom)
-                            {
-                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) >= (long)convertedFilterValue);
-                            }
-                            else if (isTo)
-                            {
-                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) <= (long)convertedFilterValue);
-                            }
-                            else
-                            {
-                                queryable = queryable.Where(p => (long)efProperty.GetValue(p) == (long)convertedFilterValue);
-                            }
+                            queryable = queryable.AddRangeComparison<TSource, long>(efProperty, convertedFilterValue, isFrom, isTo);
                         }
                         else if (efProperty.PropertyType == typeof(decimal))
                         {
-                            if (isFrom)
-                            {
-                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) >= (decimal)convertedFilterValue);
-                            }
-                            else if (isTo)
-                            {
-                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) <= (decimal)convertedFilterValue);
-                            }
-                            else
-                            {
-                                queryable = queryable.Where(p => (decimal)efProperty.GetValue(p) == (decimal)convertedFilterValue);
-                            }
+                            queryable = queryable.AddRangeComparison<TSource, decimal>(efProperty, convertedFilterValue, isFrom, isTo);
                         }
                         else if (efProperty.PropertyType == typeof(DateTime))
                         {
-                            if (isFrom)
-                            {
-                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) >= (DateTime)convertedFilterValue);
-                            }
-                            else if (isTo)
-                            {
-                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) <= (DateTime)convertedFilterValue);
-                            }
-                            else
-                            {
-                                queryable = queryable.Where(p => (DateTime)efProperty.GetValue(p) == (DateTime)convertedFilterValue);
-                            }
+                            queryable = queryable.AddRangeComparison<TSource, DateTime>(efProperty, convertedFilterValue, isFrom, isTo);
                         }
                     }
                 }
@@ -124,7 +81,7 @@ namespace CashFlow.BusinessLogic.Utilities
             return queryable.Provider.CreateQuery<TSource>(GenerateMethodCall<TSource>(queryable, methodName, sortProperties));
         }
 
-        private static IQueryable<T> Page<T>(this IQueryable<T> queryable, int? skip = null, int? take = null)
+        private static IQueryable<TSource> Page<TSource>(this IQueryable<TSource> queryable, int? skip = null, int? take = null)
         {
             if (skip.HasValue)
             {
@@ -185,6 +142,24 @@ namespace CashFlow.BusinessLogic.Utilities
         private static PropertyInfo GetPropertyInfo(Type type, string propertyName)
         {
             return type.GetProperties().Where(p => p.Name.ToLowerInvariant() == propertyName.ToLowerInvariant()).FirstOrDefault();
+        }
+
+        private static IQueryable<TSource> AddRangeComparison<TSource, U>(this IQueryable<TSource> queryable, PropertyInfo efProperty, object convertedFilterValue, bool isFrom, bool isTo)
+            where U : IComparable
+        {
+            if (isFrom)
+            {
+                queryable = queryable.Where(p => ((U)efProperty.GetValue(p)).CompareTo((U)convertedFilterValue) >= 0);
+            }
+            else if (isTo)
+            {
+                queryable = queryable.Where(p => ((U)efProperty.GetValue(p)).CompareTo((U)convertedFilterValue) <= 0);
+            }
+            else
+            {
+                queryable = queryable.Where(p => ((U)efProperty.GetValue(p)).CompareTo((U)convertedFilterValue) == 0);
+            }
+            return queryable;
         }
 
         private static LambdaExpression GenerateSelector<TEntity>(String propertyName, out Type resultType)
