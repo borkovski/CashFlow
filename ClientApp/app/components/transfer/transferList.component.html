@@ -1,62 +1,73 @@
 ﻿<h2>My Transfers</h2>
 <div class="loader" *ngIf="isLoading"></div>
 <button class="btn btn-success" type="submit" [routerLink]="['/transfer']">Add new</button>
-<table class="table table-hover" *ngIf="!isLoading">
-    <thead>
-        <tr>
-            <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions" (click)="reloadSort(columnDefinition)">
-                {{columnDefinition.dataHeader}}
-            </td>
-        </tr>
-        <tr>
-            <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions" ngSwitch="{{columnDefinition.filterType}}">
-                <span *ngSwitchCase="'string'">
-                    <input class="form-control"
-                           type="text"
-                           id="{{columnDefinition.dataKey}}"
-                           (input)="reloadFilter(columnDefinition.dataKey, $event.target.value)" />
-                </span>
-                <span *ngSwitchCase="'number'">
-                    <input class="form-control"
-                           type="number"
-                           id="{{columnDefinition.dataKey}}" />
-                </span>
-                <span *ngSwitchCase="'datetime-local'">
-                    <input class="form-control"
-                           type="datetime-local"
-                           id="{{columnDefinition.dataKey + 'From'}}" />
-                    <input class="form-control"
-                           type="datetime-local"
-                           id="{{columnDefinition.dataKey + 'To'}}" />
-                </span>
-                <span *ngSwitchCase="'dictionary'">
-                    <select class="form-control"
-                            id="{{columnDefinition.dataKey}}">
-                        <option *ngFor="let option of this.transfers" value="{{option.id}}">{{option.title}}</option>
-                    </select>
-                </span>
-            </td>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let data of gridDefinition.data" [routerLink]="['/transfer']" [queryParams]="{ id: data.id }">
-            <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions">{{data[columnDefinition.dataKey]}}</td>
-        </tr>
-    </tbody>
-</table> 
-<ul class="pagination" *ngIf="gridDefinition.getTotalPages() > 1">
-    <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == 1}"><a (click)="setPage(1)">First</a></li>
-    <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == 1}"><a (click)="setPage(gridDefinition.getCurrentPageNumber()-1)">Previous</a></li>
-    <li *ngFor="let p of gridDefinition.getPages()" [ngClass]="{active:gridDefinition.getCurrentPageNumber() == p}"><a (click)="setPage(p)">{{ p }}</a></li>
-    <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == gridDefinition.getTotalPages()}"><a (click)="setPage(gridDefinition.getCurrentPageNumber()+1)">Next</a></li>
-    <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == gridDefinition.getTotalPages()}"><a (click)="setPage(gridDefinition.getTotalPages())">Last</a></li>
-</ul>
-<div class="dropdown">
-    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-        Page size
-        <span class="caret"></span>
-    </button>
-    <ul class="dropdown-menu">
-        <li *ngFor="let p of gridDefinition.pageSizes"><a (click)="setPageSize(p)">{{ p }}</a></li>
+<form [formGroup]="myForm"
+      (ngSubmit)="reloadFilter(myForm.value)"
+      class="form-horizontal">
+    <div *ngFor="let columnDefinition of gridDefinition.columnDefinitions" ngSwitch="{{columnDefinition.filterType}}" class="form-group">
+        <label class="control-label col-lg-2">
+            {{columnDefinition.dataHeader}}
+        </label>
+        <div *ngSwitchCase="'string'" class="col-lg-3">
+            <input class="form-control"
+                   type="text"
+                   id="{{columnDefinition.dataKey}}"
+                   [formControl]="myForm.controls[columnDefinition.dataKey]" />
+        </div>
+        <div *ngSwitchCase="'number'" class="col-lg-3">
+            <input class="form-control"
+                   type="number"
+                   id="{{columnDefinition.dataKey}}"
+                   [formControl]="myForm.controls[columnDefinition.dataKey]" />
+        </div>
+        <div *ngSwitchCase="'datetime-local'" class="col-lg-3">
+            <input class="form-control"
+                   type="datetime-local"
+                   id="{{columnDefinition.dataKey + '_from'}}"
+                   [formControl]="myForm.controls[columnDefinition.dataKey + '_from']" />
+            <input class="form-control"
+                   type="datetime-local"
+                   id="{{columnDefinition.dataKey + '_to'}}"
+                   [formControl]="myForm.controls[columnDefinition.dataKey + '_to']" />
+        </div>
+        <div *ngSwitchCase="'dictionary'" class="col-lg-3">
+            <select class="form-control"
+                    id="{{columnDefinition.dataKey}}"
+                   [formControl]="myForm.controls[columnDefinition.dataKey]">
+                <option *ngFor="let option of this.transfers" value="{{option.id}}">{{option.title}}</option>
+            </select>
+        </div>
+    </div>
+    <br />
+    <button class="btn btn-primary" type="submit">Submit</button>
+</form>
+    <table class="table table-hover" *ngIf="!isLoading">
+        <thead>
+            <tr>
+                <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions" (click)="reloadSort(columnDefinition)">
+                    {{columnDefinition.dataHeader}}
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let data of gridDefinition.data" [routerLink]="['/transfer']" [queryParams]="{ id: data.id }">
+                <td *ngFor="let columnDefinition of gridDefinition.columnDefinitions">{{data[columnDefinition.dataKey]}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <ul class="pagination" *ngIf="gridDefinition.getTotalPages() > 1">
+        <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == 1}"><a (click)="setPage(1)">First</a></li>
+        <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == 1}"><a (click)="setPage(gridDefinition.getCurrentPageNumber()-1)">Previous</a></li>
+        <li *ngFor="let p of gridDefinition.getPages()" [ngClass]="{active:gridDefinition.getCurrentPageNumber() == p}"><a (click)="setPage(p)">{{ p }}</a></li>
+        <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == gridDefinition.getTotalPages()}"><a (click)="setPage(gridDefinition.getCurrentPageNumber()+1)">Next</a></li>
+        <li [ngClass]="{disabled:gridDefinition.getCurrentPageNumber() == gridDefinition.getTotalPages()}"><a (click)="setPage(gridDefinition.getTotalPages())">Last</a></li>
     </ul>
-</div>
+    <div class="dropdown">
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Page size
+            <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu">
+            <li *ngFor="let p of gridDefinition.pageSizes"><a (click)="setPageSize(p)">{{ p }}</a></li>
+        </ul>
+    </div>

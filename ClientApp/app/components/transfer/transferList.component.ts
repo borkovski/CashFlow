@@ -4,6 +4,7 @@ import { TransferService } from '../../services/transfer/transfer.service';
 import { GridDefinition } from '../../models/grid/gridDefinition.model';
 import { ColumnDefinition } from '../../models/grid/columnDefinition.model';
 import { KeyValuePair } from '../../models/grid/dataFilter.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
     selector: 'transferList',
@@ -13,8 +14,10 @@ export class TransferListComponent implements OnInit {
     isLoading: boolean;
     transfers: Transfer[] = [];
     gridDefinition: GridDefinition = new GridDefinition();
+    myForm: FormGroup;
 
-    constructor(private transferService: TransferService) {
+    constructor(private transferService: TransferService, private fb: FormBuilder) {
+
         this.gridDefinition.columnDefinitions = [
             new ColumnDefinition('id', 'Id', 'number', true),
             new ColumnDefinition('title', 'Title', 'string', true),
@@ -23,6 +26,16 @@ export class TransferListComponent implements OnInit {
             new ColumnDefinition('amount', 'Amount', 'number', true),
             new ColumnDefinition('transferDate', 'Date', 'datetime-local', true),
         ];
+        this.myForm = fb.group({});
+        this.gridDefinition.columnDefinitions.forEach(columnDefinition => {
+            if (columnDefinition.filterType == 'datetime-local') {
+                this.myForm.addControl(columnDefinition.dataKey + '_from', this.fb.control(null));
+                this.myForm.addControl(columnDefinition.dataKey + '_to', this.fb.control(null));
+            }
+            else {
+                this.myForm.addControl(columnDefinition.dataKey, this.fb.control(null));
+            }
+        });
         this.gridDefinition.dataFilter.take = 10;
         this.gridDefinition.dataFilter.skip = 0;
         this.gridDefinition.dataFilter.sortPropertyName = 'id';
@@ -36,10 +49,6 @@ export class TransferListComponent implements OnInit {
 
     loadData() {
         this.isLoading = true;
-        var keyValuePair = new KeyValuePair();
-        keyValuePair.Key = "accountFromId";
-        keyValuePair.Value = "1";
-        this.gridDefinition.dataFilter.filterProperties.push(keyValuePair);
         this.transferService.getTransferList(this.gridDefinition.dataFilter)
             .then(pagedList => {
                 this.transfers = pagedList.items;
@@ -59,17 +68,19 @@ export class TransferListComponent implements OnInit {
         }
     }
 
-    reloadFilter(dataKey: string, newValue) {
-        if (this.gridDefinition.dataFilter.filterProperties.find(p => p.Key == dataKey)) {
-            this.gridDefinition.dataFilter.filterProperties.find(p => p.Key == dataKey).Value = newValue;
+    reloadFilter(value: any): void {
+        if (this.myForm.valid) {
+            this.gridDefinition.dataFilter.filterProperties = new Array<KeyValuePair>();
+            for (let formKey of Object.keys(value)) {
+                if (value[formKey] != null && value[formKey] != '') {
+                    var keyValuePair: KeyValuePair = new KeyValuePair();
+                    keyValuePair.Key = formKey;
+                    keyValuePair.Value = value[formKey];
+                    this.gridDefinition.dataFilter.filterProperties.push(keyValuePair);
+                }
+            }
+            this.loadData();
         }
-        else {
-            var keyValuePair: KeyValuePair = new KeyValuePair();
-            keyValuePair.Key = dataKey;
-            keyValuePair.Value = newValue;
-            this.gridDefinition.dataFilter.filterProperties.push(keyValuePair);
-        }
-        this.loadData();
     }
 
     setPage(page: number) {
